@@ -1,7 +1,13 @@
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../inc";
+use lib "$FindBin::Bin/../lib";
+
 use Test::Base;
 use JSON::XS;
 
-use lib './lib';
 
 plan tests => 2* blocks() + 106;
 

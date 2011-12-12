@@ -1,11 +1,14 @@
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../inc";
+use lib "$FindBin::Bin/../lib";
+
 use Test::Base;
 use JSON::XS;
 
-use strict;
-use warnings;
-#use Smart::Comments;
 
-use lib './lib';
 use QAT::Validator;
 
 plan tests => 7;
