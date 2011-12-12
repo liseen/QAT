@@ -47,4 +47,3 @@ Author
 ======
 
 "liseen" <liseen.wan@gmail.com>
-"agentzh" <agentzh@gmail.com>
