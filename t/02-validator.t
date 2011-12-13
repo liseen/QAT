@@ -6,14 +6,14 @@ use lib "$FindBin::Bin/../inc";
 use lib "$FindBin::Bin/../lib";
 
 use Test::Base;
-use JSON::XS;
+use JSON;
 
 
 use QAT::Validator;
 
 plan tests => 7;
 
-my $json_xs = JSON::XS->new->utf8->allow_nonref;
+my $json = JSON->new->utf8->allow_nonref;
 
 run {
     my $block = shift;
@@ -26,7 +26,7 @@ run {
     my $valid = $block->valid;
     for my $ln (split /\n/, $valid) {
         ### $ln
-        my $data = $json_xs->decode($ln);
+        my $data = $json->decode($ln);
         eval {
             $validator->validate($data);
         };
@@ -36,7 +36,7 @@ run {
     my $invalid = $block->invalid;
     for my $ln (split /\n/, $invalid) {
         ### $ln
-        my $data = $json_xs->decode($ln);
+        my $data = $json->decode($ln);
         eval {
             $validator->validate($data);
         };

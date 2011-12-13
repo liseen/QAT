@@ -4,6 +4,8 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
+use JSON;
+
 use QAT::Validator::Compiler;
 require Filter::QuasiQuote;
 our @ISA = qw( Filter::QuasiQuote );

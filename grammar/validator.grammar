@@ -228,7 +228,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-JSON::XS::is_bool(\$_) or die qq{Bad value$for_topic: Boolean expected.\\n};
+JSON::is_bool(\$_) or die qq{Bad value$for_topic: Boolean expected.\\n};
 _EOC_
         }
     | 'IDENT'

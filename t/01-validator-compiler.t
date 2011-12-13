@@ -6,14 +6,13 @@ use lib "$FindBin::Bin/../inc";
 use lib "$FindBin::Bin/../lib";
 
 use Test::Base;
-use JSON::XS;
-
+use JSON;
 
 plan tests => 2* blocks() + 106;
 
 require QAT::Validator::Compiler;
 
-my $json_xs = JSON::XS->new->utf8->allow_nonref;
+my $json = JSON->new->utf8->allow_nonref;
 
 my $val = QAT::Validator::Compiler->new;
 
@@ -51,7 +50,7 @@ run {
     if ($spec) {
         my @ln = split /\n/, $spec;
         for my $ln (@ln) {
-            my $data = $json_xs->decode($ln);
+            my $data = $json->decode($ln);
             eval {
                 validate($data);
             };
@@ -68,7 +67,7 @@ run {
         while (@ln) {
             my $ln = shift @ln;
             my $excep = shift @ln;
-            my $data = $json_xs->decode($ln);
+            my $data = $json->decode($ln);
             eval {
                 validate($data);
             };
@@ -726,7 +725,7 @@ Bad value: String expected.
 BOOL
 --- perl
 if (defined) {
-    JSON::XS::is_bool($_) or die qq{Bad value: Boolean expected.\n};
+    JSON::is_bool($_) or die qq{Bad value: Boolean expected.\n};
 }
 --- valid
 true

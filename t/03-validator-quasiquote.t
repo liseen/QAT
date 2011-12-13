@@ -5,12 +5,6 @@ use FindBin;
 use lib "$FindBin::Bin/../inc";
 use lib "$FindBin::Bin/../lib";
 
-
-use Test::Base;
-use JSON::XS;
-
-#use Smart::Comments;
-
 use QAT::Validator::QuasiQuote;
 
 use Test::More;

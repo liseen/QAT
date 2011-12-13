@@ -43,7 +43,14 @@ SAYNOPSIS
             # invalid
         }
 
+Install
+===
+
+cpan JSON::XS
+
+
+
 Author
-======
+===
 
 "liseen" <liseen.wan@gmail.com>

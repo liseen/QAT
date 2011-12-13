@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
-
+use JSON;
 use QAT::Validator::Compiler;
 #use QTest::Validator::QuasiQuote;
 
