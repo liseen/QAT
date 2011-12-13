@@ -19,9 +19,9 @@ SAYNOPSIS
             $validator->validate($data)
         };
         if ($@) {
-            # valid
-        } else {
             # invalid
+        } else {
+            # valid
         }
 
     QAT::Validator::QuasiQuote;
@@ -38,9 +38,9 @@ SAYNOPSIS
             |]
         };
         if ($@) {
-            # valid
-        } else {
             # invalid
+        } else {
+            # valid
         }
 
 Install
