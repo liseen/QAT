@@ -8,7 +8,7 @@ use lib "$FindBin::Bin/../lib";
 use QAT::Util;
 
 use Test::More;
-plan tests => 1;
+plan tests => 2;
 
 my $res = QAT::Util::do_http_request({
         url => 'http://www.qunar.com/'

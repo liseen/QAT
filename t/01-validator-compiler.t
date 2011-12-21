@@ -8,7 +8,7 @@ use lib "$FindBin::Bin/../lib";
 use Test::Base;
 use JSON;
 
-plan tests => 2* blocks() + 106;
+plan tests => 2* blocks() + 118;
 
 require QAT::Validator::Compiler;
 
@@ -303,7 +303,7 @@ Invalid value: Hash expected.
 
 === TEST 8: array required
 --- spec
-[INT] :required(1)
+[INT] :required
 --- perl
 defined or die qq{Value required.\n};
 ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
@@ -739,3 +739,139 @@ Bad value: Boolean expected.
 1
 Bad value: Boolean expected.
 
+
+
+=== TEST 28: required array elme in nonempty array
+--- spec
+[INT :required] :nonempty
+--- perl
+if (defined) {
+ ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+@$_ or die qq{Array cannot be empty.\n};
+for (@$_) {
+defined or die qq{Value for array element required.\n};
+/^[-+]?\d+$/ or die qq{Bad value for array element: Integer expected.\n};
+}
+}
+--- valid
+[1]
+--- invalid
+[null]
+Value for array element required.
+[]
+Array cannot be empty.
+
+
+
+=== TEST 29 Qunar JSON API, error
+
+--- spec
+{
+    ret: BOOL :allowed('false') :required,
+    errcode: INT :required,
+    errmsg: STRING :required
+}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"ret"} );
+defined or die qq{Value for "ret" required.\n};
+JSON::is_bool($_) or die qq{Bad value for "ret": Boolean expected.\n};
+$_ eq 'false' or die qq{Invalid value for "ret": Allowed values are 'false'.\n};
+}
+{
+local *_ = \( $_->{"errcode"} );
+defined or die qq{Value for "errcode" required.\n};
+/^[-+]?\d+$/ or die qq{Bad value for "errcode": Integer expected.\n};
+}
+{
+local *_ = \( $_->{"errmsg"} );
+defined or die qq{Value for "errmsg" required.\n};
+!ref or die qq{Bad value for "errmsg": String expected.\n};
+}
+for (keys %$_) {
+$_ eq "ret" or $_ eq "errcode" or $_ eq "errmsg" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{ "ret": false, "errcode": 100, "errmsg": "No such user." }
+--- invalid
+{ "ret": true }
+Invalid value for "ret": Allowed values are 'false'.
+{ "ret": false, "errcode": 100 }
+Value for "errmsg" required.
+
+
+=== TEST 30 Qunar JSON API, okay
+
+--- spec
+{
+    ret: BOOL :allowed('true') :required,
+    data: [
+        {
+            id: INT :required,
+            name: STRING :match(/^\w+$/, "Name") :nonempty,
+            sex: STRING :allowed('male', 'female')
+        }
+    ] :required
+}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"ret"} );
+defined or die qq{Value for "ret" required.\n};
+JSON::is_bool($_) or die qq{Bad value for "ret": Boolean expected.\n};
+$_ eq 'true' or die qq{Invalid value for "ret": Allowed values are 'true'.\n};
+}
+{
+local *_ = \( $_->{"data"} );
+defined or die qq{Value for "data" required.\n};
+ref and ref eq 'ARRAY' or die qq{Invalid value for "data": Array expected.\n};
+for (@$_) {
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value for "data" array element: Hash expected.\n};
+{
+local *_ = \( $_->{"id"} );
+defined or die qq{Value for "id" for "data" array element required.\n};
+/^[-+]?\d+$/ or die qq{Bad value for "id" for "data" array element: Integer expected.\n};
+}
+{
+local *_ = \( $_->{"name"} );
+if (defined) {
+!ref or die qq{Bad value for "name" for "data" array element: String expected.\n};
+/^\w+$/ or die qq{Invalid value for "name" for "data" array element: Name expected.\n};
+length or die qq{Invalid value for "name" for "data" array element: Nonempty scalar expected.\n};
+}
+}
+{
+local *_ = \( $_->{"sex"} );
+if (defined) {
+!ref or die qq{Bad value for "sex" for "data" array element: String expected.\n};
+$_ eq 'male' or $_ eq 'female' or die qq{Invalid value for "sex" for "data" array element: Allowed values are 'male', 'female'.\n};
+}
+}
+for (keys %$_) {
+$_ eq "id" or $_ eq "name" or $_ eq "sex" or die qq{Unrecognized key in hash for "data" array element: $_\n};
+}
+}
+}
+}
+for (keys %$_) {
+$_ eq "ret" or $_ eq "data" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+
+--- valid
+{"ret": true, "data": []}
+{"ret": true, "data": [{"id": 1, "name": "zhang", "sex": "male"}]}
+--- invalid
+{"ret": false}
+Invalid value for "ret": Allowed values are 'true'.
+{"ret": true, "data": [{"id": "aaa", "name": "zhang", "sex": "male"}]}
+Bad value for "id" for "data" array element: Integer expected.
+{"ret": true, "data": [{"id": 2, "name": "", "sex": "male"}]}
+Invalid value for "name" for "data" array element: Name expected.
+{"ret": true, "data": [{"id": 2, "name": "zhang", "sex": "ssss"}]}
+Invalid value for "sex" for "data" array element: Allowed values are 'male', 'female'.
