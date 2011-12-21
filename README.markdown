@@ -180,11 +180,11 @@ Spec Samples:
 Install
 ===
 
-Extra dependencies in inc directory.
+    Extra dependencies in inc directory.
 
-  use FindBin;
-  use lib "$FindBin::Bin/../inc";
-  use lib "$FindBin::Bin/../lib";
+    use FindBin;
+    use lib "$FindBin::Bin/../inc";
+    use lib "$FindBin::Bin/../lib";
 
 Author
 ===
