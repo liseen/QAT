@@ -454,7 +454,7 @@ sub Parse::RecDescent::QAT::Validator::Compiler::value
     my $text;
     my $lastsep="";
     my $current_match;
-    my $expectation = new Parse::RecDescent::Expectation(q{hash, or array, or scalar});
+    my $expectation = new Parse::RecDescent::Expectation(q{hash, or array, or scalar, or 'true', or 'false', or 'null', or /\\-?\\d+(\\.\\d+)?/});
     $expectation->at($_[1]);
     
     my $thisline;
@@ -633,6 +633,418 @@ sub Parse::RecDescent::QAT::Validator::Compiler::value
     }
 
 
+    while (!$_matched && !$commit)
+    {
+        
+        Parse::RecDescent::_trace(q{Trying production: ['true']},
+                      Parse::RecDescent::_tracefirst($_[1]),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        my $thisprod = $thisrule->{"prods"}[3];
+        $text = $_[1];
+        my $_savetext;
+        @item = (q{value});
+        %item = (__RULE__ => q{value});
+        my $repcount = 0;
+
+
+        Parse::RecDescent::_trace(q{Trying terminal: ['true']},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $lastsep = "";
+        $expectation->is(q{})->at($text);
+        
+
+        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Atrue/)
+        {
+            
+            $expectation->failed();
+            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+            last;
+        }
+		$current_match = substr($text, $-[0], $+[0] - $-[0]);
+        substr($text,0,length($current_match),q{});
+        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
+                        . $current_match . q{])},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+        push @item, $item{__STRING1__}=$current_match;
+        
+
+        Parse::RecDescent::_trace(q{Trying action},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        
+
+        $_tok = ($_noactions) ? 0 : do {
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+(JSON::is_bool(\$_) && \$_ == JSON::true) or die qq{Bad value$for_topic: Boolean value true expected.\\n};
+_EOC_
+            $code;
+        };
+        unless (defined $_tok)
+        {
+            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
+                    if defined $::RD_TRACE;
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
+                      . $_tok . q{])},
+                      Parse::RecDescent::_tracefirst($text))
+                        if defined $::RD_TRACE;
+        push @item, $_tok;
+        $item{__ACTION1__}=$_tok;
+        
+
+
+        Parse::RecDescent::_trace(q{>>Matched production: ['true']<<},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $_matched = 1;
+        last;
+    }
+
+
+    while (!$_matched && !$commit)
+    {
+        
+        Parse::RecDescent::_trace(q{Trying production: ['false']},
+                      Parse::RecDescent::_tracefirst($_[1]),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        my $thisprod = $thisrule->{"prods"}[4];
+        $text = $_[1];
+        my $_savetext;
+        @item = (q{value});
+        %item = (__RULE__ => q{value});
+        my $repcount = 0;
+
+
+        Parse::RecDescent::_trace(q{Trying terminal: ['false']},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $lastsep = "";
+        $expectation->is(q{})->at($text);
+        
+
+        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Afalse/)
+        {
+            
+            $expectation->failed();
+            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+            last;
+        }
+		$current_match = substr($text, $-[0], $+[0] - $-[0]);
+        substr($text,0,length($current_match),q{});
+        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
+                        . $current_match . q{])},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+        push @item, $item{__STRING1__}=$current_match;
+        
+
+        Parse::RecDescent::_trace(q{Trying action},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        
+
+        $_tok = ($_noactions) ? 0 : do {
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+(JSON::is_bool(\$_) && \$_ == JSON::false) or die qq{Bad value$for_topic: Boolean value false expected.\\n};
+_EOC_
+            $code;
+        };
+        unless (defined $_tok)
+        {
+            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
+                    if defined $::RD_TRACE;
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
+                      . $_tok . q{])},
+                      Parse::RecDescent::_tracefirst($text))
+                        if defined $::RD_TRACE;
+        push @item, $_tok;
+        $item{__ACTION1__}=$_tok;
+        
+
+
+        Parse::RecDescent::_trace(q{>>Matched production: ['false']<<},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $_matched = 1;
+        last;
+    }
+
+
+    while (!$_matched && !$commit)
+    {
+        
+        Parse::RecDescent::_trace(q{Trying production: ['null']},
+                      Parse::RecDescent::_tracefirst($_[1]),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        my $thisprod = $thisrule->{"prods"}[5];
+        $text = $_[1];
+        my $_savetext;
+        @item = (q{value});
+        %item = (__RULE__ => q{value});
+        my $repcount = 0;
+
+
+        Parse::RecDescent::_trace(q{Trying terminal: ['null']},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $lastsep = "";
+        $expectation->is(q{})->at($text);
+        
+
+        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Anull/)
+        {
+            
+            $expectation->failed();
+            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+            last;
+        }
+		$current_match = substr($text, $-[0], $+[0] - $-[0]);
+        substr($text,0,length($current_match),q{});
+        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
+                        . $current_match . q{])},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+        push @item, $item{__STRING1__}=$current_match;
+        
+
+        Parse::RecDescent::_trace(q{Trying action},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        
+
+        $_tok = ($_noactions) ? 0 : do {
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+!defined or die qq{Bad value$for_topic: null expected.\\n};
+_EOC_
+            $code;
+        };
+        unless (defined $_tok)
+        {
+            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
+                    if defined $::RD_TRACE;
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
+                      . $_tok . q{])},
+                      Parse::RecDescent::_tracefirst($text))
+                        if defined $::RD_TRACE;
+        push @item, $_tok;
+        $item{__ACTION1__}=$_tok;
+        
+
+
+        Parse::RecDescent::_trace(q{>>Matched production: ['null']<<},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $_matched = 1;
+        last;
+    }
+
+
+    while (!$_matched && !$commit)
+    {
+        
+        Parse::RecDescent::_trace(q{Trying production: [/\\-?\\d+(\\.\\d+)?/]},
+                      Parse::RecDescent::_tracefirst($_[1]),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        my $thisprod = $thisrule->{"prods"}[6];
+        $text = $_[1];
+        my $_savetext;
+        @item = (q{value});
+        %item = (__RULE__ => q{value});
+        my $repcount = 0;
+
+
+        Parse::RecDescent::_trace(q{Trying terminal: [/\\-?\\d+(\\.\\d+)?/]}, Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $lastsep = "";
+        $expectation->is(q{})->at($text);
+        
+
+        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A(?:\-?\d+(\.\d+)?)/)
+        {
+            
+            $expectation->failed();
+            Parse::RecDescent::_trace(q{<<Didn't match terminal>>},
+                          Parse::RecDescent::_tracefirst($text))
+                    if defined $::RD_TRACE;
+
+            last;
+        }
+		$current_match = substr($text, $-[0], $+[0] - $-[0]);
+        substr($text,0,length($current_match),q{});
+        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
+                        . $current_match . q{])},
+                          Parse::RecDescent::_tracefirst($text))
+                    if defined $::RD_TRACE;
+        push @item, $item{__PATTERN1__}=$current_match;
+        
+
+        Parse::RecDescent::_trace(q{Trying action},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        
+
+        $_tok = ($_noactions) ? 0 : do {
+            my $num = $item[1];
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+\$_ == $num or die qq{Bad value$for_topic: number $num expected.\\n};
+_EOC_
+            $code;
+        };
+        unless (defined $_tok)
+        {
+            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
+                    if defined $::RD_TRACE;
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
+                      . $_tok . q{])},
+                      Parse::RecDescent::_tracefirst($text))
+                        if defined $::RD_TRACE;
+        push @item, $_tok;
+        $item{__ACTION1__}=$_tok;
+        
+
+
+        Parse::RecDescent::_trace(q{>>Matched production: [/\\-?\\d+(\\.\\d+)?/]<<},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $_matched = 1;
+        last;
+    }
+
+
+    while (!$_matched && !$commit)
+    {
+        
+        Parse::RecDescent::_trace(q{Trying production: []},
+                      Parse::RecDescent::_tracefirst($_[1]),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        my $thisprod = $thisrule->{"prods"}[7];
+        $text = $_[1];
+        my $_savetext;
+        @item = (q{value});
+        %item = (__RULE__ => q{value});
+        my $repcount = 0;
+
+
+        Parse::RecDescent::_trace(q{Trying action},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        
+
+        $_tok = ($_noactions) ? 0 : do { extract_quotelike($text) };
+        unless (defined $_tok)
+        {
+            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
+                    if defined $::RD_TRACE;
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
+                      . $_tok . q{])},
+                      Parse::RecDescent::_tracefirst($text))
+                        if defined $::RD_TRACE;
+        push @item, $_tok;
+        $item{__ACTION1__}=$_tok;
+        
+
+        Parse::RecDescent::_trace(q{Trying action},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        
+
+        $_tok = ($_noactions) ? 0 : do {
+            my $str = $item[1];
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+\$_ eq $str or die qq{Bad value$for_topic: string $str expected.\\n};
+_EOC_
+            $code;
+        };
+        unless (defined $_tok)
+        {
+            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
+                    if defined $::RD_TRACE;
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
+                      . $_tok . q{])},
+                      Parse::RecDescent::_tracefirst($text))
+                        if defined $::RD_TRACE;
+        push @item, $_tok;
+        $item{__ACTION2__}=$_tok;
+        
+
+
+        Parse::RecDescent::_trace(q{>>Matched production: []<<},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{value},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $_matched = 1;
+        last;
+    }
+
+
     while (!$_matched)
     {
         
@@ -641,7 +1053,7 @@ sub Parse::RecDescent::QAT::Validator::Compiler::value
                       q{value},
                       $tracelevel)
                         if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[3];
+        my $thisprod = $thisrule->{"prods"}[8];
         
         my $_savetext;
         @item = (q{value});
@@ -4648,13 +5060,13 @@ package QAT::Validator::Compiler; sub new { my $self = bless( {
                                                                                                'implicit' => undef,
                                                                                                'argcode' => undef,
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 84
+                                                                                               'line' => 131
                                                                                              }, 'Parse::RecDescent::Subrule' ),
                                                                                       bless( {
                                                                                                'hashname' => '__DIRECTIVE1__',
                                                                                                'name' => '<commit>',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 84,
+                                                                                               'line' => 131,
                                                                                                'code' => '$commit = 1'
                                                                                              }, 'Parse::RecDescent::Directive' ),
                                                                                       bless( {
@@ -4666,12 +5078,12 @@ package QAT::Validator::Compiler; sub new { my $self = bless( {
                                                                                                'matchrule' => 0,
                                                                                                'repspec' => 's?',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 84
+                                                                                               'line' => 131
                                                                                              }, 'Parse::RecDescent::Repetition' ),
                                                                                       bless( {
                                                                                                'hashname' => '__ACTION1__',
                                                                                                'lookahead' => 0,
-                                                                                               'line' => 85,
+                                                                                               'line' => 132,
                                                                                                'code' => '{
         my $attrs = { map { @$_ } @{ $item[3] } };
         my $topic = $arg{topic};
@@ -4738,7 +5150,7 @@ _EOC_
                                                               ],
                                                    'name' => 'scalar',
                                                    'vars' => '',
-                                                   'line' => 84
+                                                   'line' => 131
                                                  }, 'Parse::RecDescent::Rule' ),
                               'variable' => bless( {
                                                      'impcount' => 0,
@@ -4841,6 +5253,170 @@ _EOC_
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
                                                                         'number' => '3',
+                                                                        'strcount' => 1,
+                                                                        'dircount' => 0,
+                                                                        'uncommit' => undef,
+                                                                        'error' => undef,
+                                                                        'patcount' => 0,
+                                                                        'actcount' => 1,
+                                                                        'items' => [
+                                                                                     bless( {
+                                                                                              'pattern' => 'true',
+                                                                                              'hashname' => '__STRING1__',
+                                                                                              'description' => '\'true\'',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 17
+                                                                                            }, 'Parse::RecDescent::Literal' ),
+                                                                                     bless( {
+                                                                                              'hashname' => '__ACTION1__',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 18,
+                                                                                              'code' => '{
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+(JSON::is_bool(\\$_) && \\$_ == JSON::true) or die qq{Bad value$for_topic: Boolean value true expected.\\\\n};
+_EOC_
+            $code;
+        }'
+                                                                                            }, 'Parse::RecDescent::Action' )
+                                                                                   ],
+                                                                        'line' => 17
+                                                                      }, 'Parse::RecDescent::Production' ),
+                                                               bless( {
+                                                                        'number' => '4',
+                                                                        'strcount' => 1,
+                                                                        'dircount' => 0,
+                                                                        'uncommit' => undef,
+                                                                        'error' => undef,
+                                                                        'patcount' => 0,
+                                                                        'actcount' => 1,
+                                                                        'items' => [
+                                                                                     bless( {
+                                                                                              'pattern' => 'false',
+                                                                                              'hashname' => '__STRING1__',
+                                                                                              'description' => '\'false\'',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 26
+                                                                                            }, 'Parse::RecDescent::Literal' ),
+                                                                                     bless( {
+                                                                                              'hashname' => '__ACTION1__',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 27,
+                                                                                              'code' => '{
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+(JSON::is_bool(\\$_) && \\$_ == JSON::false) or die qq{Bad value$for_topic: Boolean value false expected.\\\\n};
+_EOC_
+            $code;
+        }'
+                                                                                            }, 'Parse::RecDescent::Action' )
+                                                                                   ],
+                                                                        'line' => 26
+                                                                      }, 'Parse::RecDescent::Production' ),
+                                                               bless( {
+                                                                        'number' => '5',
+                                                                        'strcount' => 1,
+                                                                        'dircount' => 0,
+                                                                        'uncommit' => undef,
+                                                                        'error' => undef,
+                                                                        'patcount' => 0,
+                                                                        'actcount' => 1,
+                                                                        'items' => [
+                                                                                     bless( {
+                                                                                              'pattern' => 'null',
+                                                                                              'hashname' => '__STRING1__',
+                                                                                              'description' => '\'null\'',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 35
+                                                                                            }, 'Parse::RecDescent::Literal' ),
+                                                                                     bless( {
+                                                                                              'hashname' => '__ACTION1__',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 36,
+                                                                                              'code' => '{
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+!defined or die qq{Bad value$for_topic: null expected.\\\\n};
+_EOC_
+            $code;
+        }'
+                                                                                            }, 'Parse::RecDescent::Action' )
+                                                                                   ],
+                                                                        'line' => 35
+                                                                      }, 'Parse::RecDescent::Production' ),
+                                                               bless( {
+                                                                        'number' => '6',
+                                                                        'strcount' => 0,
+                                                                        'dircount' => 0,
+                                                                        'uncommit' => undef,
+                                                                        'error' => undef,
+                                                                        'patcount' => 1,
+                                                                        'actcount' => 1,
+                                                                        'items' => [
+                                                                                     bless( {
+                                                                                              'pattern' => '\\-?\\d+(\\.\\d+)?',
+                                                                                              'hashname' => '__PATTERN1__',
+                                                                                              'description' => '/\\\\-?\\\\d+(\\\\.\\\\d+)?/',
+                                                                                              'lookahead' => 0,
+                                                                                              'rdelim' => '/',
+                                                                                              'line' => 44,
+                                                                                              'mod' => '',
+                                                                                              'ldelim' => '/'
+                                                                                            }, 'Parse::RecDescent::Token' ),
+                                                                                     bless( {
+                                                                                              'hashname' => '__ACTION1__',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 45,
+                                                                                              'code' => '{
+            my $num = $item[1];
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+\\$_ == $num or die qq{Bad value$for_topic: number $num expected.\\\\n};
+_EOC_
+            $code;
+        }'
+                                                                                            }, 'Parse::RecDescent::Action' )
+                                                                                   ],
+                                                                        'line' => 44
+                                                                      }, 'Parse::RecDescent::Production' ),
+                                                               bless( {
+                                                                        'number' => '7',
+                                                                        'strcount' => 0,
+                                                                        'dircount' => 0,
+                                                                        'uncommit' => undef,
+                                                                        'error' => undef,
+                                                                        'patcount' => 0,
+                                                                        'actcount' => 2,
+                                                                        'items' => [
+                                                                                     bless( {
+                                                                                              'hashname' => '__ACTION1__',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 54,
+                                                                                              'code' => '{ extract_quotelike($text) }'
+                                                                                            }, 'Parse::RecDescent::Action' ),
+                                                                                     bless( {
+                                                                                              'hashname' => '__ACTION2__',
+                                                                                              'lookahead' => 0,
+                                                                                              'line' => 55,
+                                                                                              'code' => '{
+            my $str = $item[1];
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+\\$_ eq $str or die qq{Bad value$for_topic: string $str expected.\\\\n};
+_EOC_
+            $code;
+        }'
+                                                                                            }, 'Parse::RecDescent::Action' )
+                                                                                   ],
+                                                                        'line' => 54
+                                                                      }, 'Parse::RecDescent::Production' ),
+                                                               bless( {
+                                                                        'number' => '8',
                                                                         'strcount' => 0,
                                                                         'dircount' => 1,
                                                                         'uncommit' => 0,
@@ -4853,10 +5429,10 @@ _EOC_
                                                                                               'hashname' => '__DIRECTIVE1__',
                                                                                               'commitonly' => '',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 17
+                                                                                              'line' => 64
                                                                                             }, 'Parse::RecDescent::Error' )
                                                                                    ],
-                                                                        'line' => 17
+                                                                        'line' => 64
                                                                       }, 'Parse::RecDescent::Production' )
                                                              ],
                                                   'name' => 'value',
@@ -4933,7 +5509,7 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\':\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 246
+                                                                                             'line' => 293
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'subrule' => 'ident',
@@ -4941,20 +5517,20 @@ _EOC_
                                                                                              'implicit' => undef,
                                                                                              'argcode' => undef,
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 246
+                                                                                             'line' => 293
                                                                                            }, 'Parse::RecDescent::Subrule' ),
                                                                                     bless( {
                                                                                              'pattern' => '(',
                                                                                              'hashname' => '__STRING2__',
                                                                                              'description' => '\'(\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 246
+                                                                                             'line' => 293
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__DIRECTIVE1__',
                                                                                              'name' => '<commit>',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 246,
+                                                                                             'line' => 293,
                                                                                              'code' => '$commit = 1'
                                                                                            }, 'Parse::RecDescent::Directive' ),
                                                                                     bless( {
@@ -4968,7 +5544,7 @@ _EOC_
                                                                                                                    'implicit' => undef,
                                                                                                                    'argcode' => undef,
                                                                                                                    'lookahead' => 0,
-                                                                                                                   'line' => 246
+                                                                                                                   'line' => 293
                                                                                                                  }, 'Parse::RecDescent::Subrule' ),
                                                                                              'rightarg' => bless( {
                                                                                                                     'subrule' => 'argument',
@@ -4976,7 +5552,7 @@ _EOC_
                                                                                                                     'implicit' => undef,
                                                                                                                     'argcode' => undef,
                                                                                                                     'lookahead' => 0,
-                                                                                                                    'line' => 246
+                                                                                                                    'line' => 293
                                                                                                                   }, 'Parse::RecDescent::Subrule' ),
                                                                                              'hashname' => '__DIRECTIVE2__',
                                                                                              'type' => 'leftop',
@@ -4986,7 +5562,7 @@ _EOC_
                                                                                                               'description' => '/,/',
                                                                                                               'lookahead' => 0,
                                                                                                               'rdelim' => '/',
-                                                                                                              'line' => 246,
+                                                                                                              'line' => 293,
                                                                                                               'mod' => '',
                                                                                                               'ldelim' => '/'
                                                                                                             }, 'Parse::RecDescent::Token' )
@@ -4996,12 +5572,12 @@ _EOC_
                                                                                              'hashname' => '__STRING3__',
                                                                                              'description' => '\')\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 246
+                                                                                             'line' => 293
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 247,
+                                                                                             'line' => 294,
                                                                                              'code' => '{ [ $item[2] => [ @{ $item[5] } ] ] }'
                                                                                            }, 'Parse::RecDescent::Action' )
                                                                                   ],
@@ -5021,13 +5597,13 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\':\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 248
+                                                                                             'line' => 295
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__DIRECTIVE1__',
                                                                                              'name' => '<commit>',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 248,
+                                                                                             'line' => 295,
                                                                                              'code' => '$commit = 1'
                                                                                            }, 'Parse::RecDescent::Directive' ),
                                                                                     bless( {
@@ -5036,16 +5612,16 @@ _EOC_
                                                                                              'implicit' => undef,
                                                                                              'argcode' => undef,
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 248
+                                                                                             'line' => 295
                                                                                            }, 'Parse::RecDescent::Subrule' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 249,
+                                                                                             'line' => 296,
                                                                                              'code' => '{ [ $item[3] => 1 ] }'
                                                                                            }, 'Parse::RecDescent::Action' )
                                                                                   ],
-                                                                       'line' => 248
+                                                                       'line' => 295
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
                                                                        'number' => '2',
@@ -5061,21 +5637,21 @@ _EOC_
                                                                                              'hashname' => '__DIRECTIVE1__',
                                                                                              'commitonly' => '?',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 250
+                                                                                             'line' => 297
                                                                                            }, 'Parse::RecDescent::Error' ),
                                                                                     bless( {
                                                                                              'hashname' => '__DIRECTIVE2__',
                                                                                              'name' => '<reject>',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 250
+                                                                                             'line' => 297
                                                                                            }, 'Parse::RecDescent::UncondReject' )
                                                                                   ],
-                                                                       'line' => 250
+                                                                       'line' => 297
                                                                      }, 'Parse::RecDescent::Production' )
                                                             ],
                                                  'name' => 'attr',
                                                  'vars' => '',
-                                                 'line' => 246
+                                                 'line' => 293
                                                }, 'Parse::RecDescent::Rule' ),
                               'ident' => bless( {
                                                   'impcount' => 0,
@@ -5098,7 +5674,7 @@ _EOC_
                                                                                               'description' => '/^[A-Za-z]\\\\w*/',
                                                                                               'lookahead' => 0,
                                                                                               'rdelim' => '/',
-                                                                                              'line' => 82,
+                                                                                              'line' => 129,
                                                                                               'mod' => '',
                                                                                               'ldelim' => '/'
                                                                                             }, 'Parse::RecDescent::Token' )
@@ -5108,7 +5684,7 @@ _EOC_
                                                              ],
                                                   'name' => 'ident',
                                                   'vars' => '',
-                                                  'line' => 82
+                                                  'line' => 129
                                                 }, 'Parse::RecDescent::Rule' ),
                               'key' => bless( {
                                                 'impcount' => 0,
@@ -5130,13 +5706,13 @@ _EOC_
                                                                                    bless( {
                                                                                             'hashname' => '__ACTION1__',
                                                                                             'lookahead' => 0,
-                                                                                            'line' => 79,
+                                                                                            'line' => 126,
                                                                                             'code' => '{ extract_delimited($text, \'"\') }'
                                                                                           }, 'Parse::RecDescent::Action' ),
                                                                                    bless( {
                                                                                             'hashname' => '__ACTION2__',
                                                                                             'lookahead' => 0,
-                                                                                            'line' => 79,
+                                                                                            'line' => 126,
                                                                                             'code' => '{ eval $item[1] }'
                                                                                           }, 'Parse::RecDescent::Action' )
                                                                                  ],
@@ -5157,15 +5733,15 @@ _EOC_
                                                                                             'implicit' => undef,
                                                                                             'argcode' => undef,
                                                                                             'lookahead' => 0,
-                                                                                            'line' => 80
+                                                                                            'line' => 127
                                                                                           }, 'Parse::RecDescent::Subrule' )
                                                                                  ],
-                                                                      'line' => 80
+                                                                      'line' => 127
                                                                     }, 'Parse::RecDescent::Production' )
                                                            ],
                                                 'name' => 'key',
                                                 'vars' => '',
-                                                'line' => 79
+                                                'line' => 126
                                               }, 'Parse::RecDescent::Rule' ),
                               'validator' => bless( {
                                                       'impcount' => 0,
@@ -5281,7 +5857,7 @@ _EOC_
                                                                                                  'description' => '/^\\\\d+/',
                                                                                                  'lookahead' => 0,
                                                                                                  'rdelim' => '/',
-                                                                                                 'line' => 252,
+                                                                                                 'line' => 299,
                                                                                                  'mod' => '',
                                                                                                  'ldelim' => '/'
                                                                                                }, 'Parse::RecDescent::Token' )
@@ -5302,10 +5878,10 @@ _EOC_
                                                                                                  'hashname' => '__STRING1__',
                                                                                                  'description' => '\'[]\'',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 253
+                                                                                                 'line' => 300
                                                                                                }, 'Parse::RecDescent::Literal' )
                                                                                       ],
-                                                                           'line' => 253
+                                                                           'line' => 300
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
                                                                            'number' => '2',
@@ -5322,10 +5898,10 @@ _EOC_
                                                                                                  'implicit' => undef,
                                                                                                  'argcode' => undef,
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 254
+                                                                                                 'line' => 301
                                                                                                }, 'Parse::RecDescent::Subrule' )
                                                                                       ],
-                                                                           'line' => 254
+                                                                           'line' => 301
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
                                                                            'number' => '3',
@@ -5339,17 +5915,17 @@ _EOC_
                                                                                         bless( {
                                                                                                  'hashname' => '__ACTION1__',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 255,
+                                                                                                 'line' => 302,
                                                                                                  'code' => '{ extract_quotelike($text) }'
                                                                                                }, 'Parse::RecDescent::Action' ),
                                                                                         bless( {
                                                                                                  'hashname' => '__ACTION2__',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 255,
+                                                                                                 'line' => 302,
                                                                                                  'code' => '{ $item[1] }'
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 255
+                                                                           'line' => 302
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
                                                                            'number' => '4',
@@ -5363,17 +5939,17 @@ _EOC_
                                                                                         bless( {
                                                                                                  'hashname' => '__ACTION1__',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 256,
+                                                                                                 'line' => 303,
                                                                                                  'code' => '{ extract_codeblock($text) }'
                                                                                                }, 'Parse::RecDescent::Action' ),
                                                                                         bless( {
                                                                                                  'hashname' => '__ACTION2__',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 256,
+                                                                                                 'line' => 303,
                                                                                                  'code' => '{ "do $item[1]" }'
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 256
+                                                                           'line' => 303
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
                                                                            'number' => '5',
@@ -5389,15 +5965,15 @@ _EOC_
                                                                                                  'hashname' => '__DIRECTIVE1__',
                                                                                                  'commitonly' => '',
                                                                                                  'lookahead' => 0,
-                                                                                                 'line' => 257
+                                                                                                 'line' => 304
                                                                                                }, 'Parse::RecDescent::Error' )
                                                                                       ],
-                                                                           'line' => 257
+                                                                           'line' => 304
                                                                          }, 'Parse::RecDescent::Production' )
                                                                 ],
                                                      'name' => 'argument',
                                                      'vars' => '',
-                                                     'line' => 252
+                                                     'line' => 299
                                                    }, 'Parse::RecDescent::Rule' ),
                               'array' => bless( {
                                                   'impcount' => 0,
@@ -5422,13 +5998,13 @@ _EOC_
                                                                                               'hashname' => '__STRING1__',
                                                                                               'description' => '\'[\'',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 145
+                                                                                              'line' => 192
                                                                                             }, 'Parse::RecDescent::Literal' ),
                                                                                      bless( {
                                                                                               'hashname' => '__DIRECTIVE1__',
                                                                                               'name' => '<commit>',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 145,
+                                                                                              'line' => 192,
                                                                                               'code' => '$commit = 1'
                                                                                             }, 'Parse::RecDescent::Directive' ),
                                                                                      bless( {
@@ -5437,14 +6013,14 @@ _EOC_
                                                                                               'implicit' => undef,
                                                                                               'argcode' => undef,
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 145
+                                                                                              'line' => 192
                                                                                             }, 'Parse::RecDescent::Subrule' ),
                                                                                      bless( {
                                                                                               'pattern' => ']',
                                                                                               'hashname' => '__STRING2__',
                                                                                               'description' => '\']\'',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 145
+                                                                                              'line' => 192
                                                                                             }, 'Parse::RecDescent::Literal' ),
                                                                                      bless( {
                                                                                               'subrule' => 'attr',
@@ -5455,12 +6031,12 @@ _EOC_
                                                                                               'matchrule' => 0,
                                                                                               'repspec' => 's?',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 145
+                                                                                              'line' => 192
                                                                                             }, 'Parse::RecDescent::Repetition' ),
                                                                                      bless( {
                                                                                               'hashname' => '__ACTION1__',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 146,
+                                                                                              'line' => 193,
                                                                                               'code' => '{
         my $attrs = { map { @$_ } @{ $item[5] } };
         my $topic = $arg{topic};
@@ -5533,21 +6109,21 @@ _EOC_
                                                                                               'hashname' => '__DIRECTIVE1__',
                                                                                               'commitonly' => '?',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 200
+                                                                                              'line' => 247
                                                                                             }, 'Parse::RecDescent::Error' ),
                                                                                      bless( {
                                                                                               'hashname' => '__DIRECTIVE2__',
                                                                                               'name' => '<reject>',
                                                                                               'lookahead' => 0,
-                                                                                              'line' => 200
+                                                                                              'line' => 247
                                                                                             }, 'Parse::RecDescent::UncondReject' )
                                                                                    ],
-                                                                        'line' => 200
+                                                                        'line' => 247
                                                                       }, 'Parse::RecDescent::Production' )
                                                              ],
                                                   'name' => 'array',
                                                   'vars' => '',
-                                                  'line' => 145
+                                                  'line' => 192
                                                 }, 'Parse::RecDescent::Rule' ),
                               'hash' => bless( {
                                                  'impcount' => 0,
@@ -5573,13 +6149,13 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\'\\{\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 19
+                                                                                             'line' => 66
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__DIRECTIVE1__',
                                                                                              'name' => '<commit>',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 19,
+                                                                                             'line' => 66,
                                                                                              'code' => '$commit = 1'
                                                                                            }, 'Parse::RecDescent::Directive' ),
                                                                                     bless( {
@@ -5593,7 +6169,7 @@ _EOC_
                                                                                                                    'implicit' => undef,
                                                                                                                    'argcode' => undef,
                                                                                                                    'lookahead' => 0,
-                                                                                                                   'line' => 19
+                                                                                                                   'line' => 66
                                                                                                                  }, 'Parse::RecDescent::Subrule' ),
                                                                                              'rightarg' => bless( {
                                                                                                                     'subrule' => 'pair',
@@ -5601,7 +6177,7 @@ _EOC_
                                                                                                                     'implicit' => undef,
                                                                                                                     'argcode' => undef,
                                                                                                                     'lookahead' => 0,
-                                                                                                                    'line' => 19
+                                                                                                                    'line' => 66
                                                                                                                   }, 'Parse::RecDescent::Subrule' ),
                                                                                              'hashname' => '__DIRECTIVE2__',
                                                                                              'type' => 'leftop',
@@ -5611,7 +6187,7 @@ _EOC_
                                                                                                               'description' => '/,/',
                                                                                                               'lookahead' => 0,
                                                                                                               'rdelim' => '/',
-                                                                                                              'line' => 19,
+                                                                                                              'line' => 66,
                                                                                                               'mod' => '',
                                                                                                               'ldelim' => '/'
                                                                                                             }, 'Parse::RecDescent::Token' )
@@ -5622,7 +6198,7 @@ _EOC_
                                                                                              'description' => '/,?/',
                                                                                              'lookahead' => 0,
                                                                                              'rdelim' => '/',
-                                                                                             'line' => 19,
+                                                                                             'line' => 66,
                                                                                              'mod' => '',
                                                                                              'ldelim' => '/'
                                                                                            }, 'Parse::RecDescent::Token' ),
@@ -5631,7 +6207,7 @@ _EOC_
                                                                                              'hashname' => '__STRING2__',
                                                                                              'description' => '\'\\}\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 19
+                                                                                             'line' => 66
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'subrule' => 'attr',
@@ -5642,12 +6218,12 @@ _EOC_
                                                                                              'matchrule' => 0,
                                                                                              'repspec' => 's?',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 19
+                                                                                             'line' => 66
                                                                                            }, 'Parse::RecDescent::Repetition' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 20,
+                                                                                             'line' => 67,
                                                                                              'code' => '{
         my $attrs = { map { @$_ } @{ $item[6] } };
         my $pairs = $item[3];
@@ -5703,7 +6279,7 @@ _EOC_
                                                             ],
                                                  'name' => 'hash',
                                                  'vars' => '',
-                                                 'line' => 19
+                                                 'line' => 66
                                                }, 'Parse::RecDescent::Rule' ),
                               'array_elem' => bless( {
                                                        'impcount' => 0,
@@ -5725,7 +6301,7 @@ _EOC_
                                                                                           bless( {
                                                                                                    'hashname' => '__ACTION1__',
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 202,
+                                                                                                   'line' => 249,
                                                                                                    'code' => '{
                 if ($arg{topic}) {
                     $arg{topic} . " "
@@ -5740,7 +6316,7 @@ _EOC_
                                                                                                    'implicit' => undef,
                                                                                                    'argcode' => '[topic => $item[1] . \'array element\']',
                                                                                                    'lookahead' => 0,
-                                                                                                   'line' => 208
+                                                                                                   'line' => 255
                                                                                                  }, 'Parse::RecDescent::Subrule' )
                                                                                         ],
                                                                              'line' => undef
@@ -5748,7 +6324,7 @@ _EOC_
                                                                   ],
                                                        'name' => 'array_elem',
                                                        'vars' => '',
-                                                       'line' => 202
+                                                       'line' => 249
                                                      }, 'Parse::RecDescent::Rule' ),
                               'pair' => bless( {
                                                  'impcount' => 0,
@@ -5774,13 +6350,13 @@ _EOC_
                                                                                              'implicit' => undef,
                                                                                              'argcode' => undef,
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 69
+                                                                                             'line' => 116
                                                                                            }, 'Parse::RecDescent::Subrule' ),
                                                                                     bless( {
                                                                                              'hashname' => '__DIRECTIVE1__',
                                                                                              'name' => '<commit>',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 69,
+                                                                                             'line' => 116,
                                                                                              'code' => '$commit = 1'
                                                                                            }, 'Parse::RecDescent::Directive' ),
                                                                                     bless( {
@@ -5788,7 +6364,7 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\':\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 69
+                                                                                             'line' => 116
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'subrule' => 'value',
@@ -5796,12 +6372,12 @@ _EOC_
                                                                                              'implicit' => undef,
                                                                                              'argcode' => '[ topic => qq{"$item[1]"} . ($arg{topic} ? " for $arg{topic}" : \'\') ]',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 69
+                                                                                             'line' => 116
                                                                                            }, 'Parse::RecDescent::Subrule' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 70,
+                                                                                             'line' => 117,
                                                                                              'code' => '{
             my $quoted_key = quotemeta($item[1]);
             [$item[1], <<"_EOC_" . $item[4] . "}\\n"]
@@ -5827,21 +6403,21 @@ _EOC_
                                                                                              'hashname' => '__DIRECTIVE1__',
                                                                                              'commitonly' => '?',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 77
+                                                                                             'line' => 124
                                                                                            }, 'Parse::RecDescent::Error' ),
                                                                                     bless( {
                                                                                              'hashname' => '__DIRECTIVE2__',
                                                                                              'name' => '<reject>',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 77
+                                                                                             'line' => 124
                                                                                            }, 'Parse::RecDescent::UncondReject' )
                                                                                   ],
-                                                                       'line' => 77
+                                                                       'line' => 124
                                                                      }, 'Parse::RecDescent::Production' )
                                                             ],
                                                  'name' => 'pair',
                                                  'vars' => '',
-                                                 'line' => 69
+                                                 'line' => 116
                                                }, 'Parse::RecDescent::Rule' ),
                               'eofile' => bless( {
                                                    'impcount' => 0,
@@ -5864,7 +6440,7 @@ _EOC_
                                                                                                'description' => '/^\\\\Z/',
                                                                                                'lookahead' => 0,
                                                                                                'rdelim' => '/',
-                                                                                               'line' => 259,
+                                                                                               'line' => 306,
                                                                                                'mod' => '',
                                                                                                'ldelim' => '/'
                                                                                              }, 'Parse::RecDescent::Token' )
@@ -5874,7 +6450,7 @@ _EOC_
                                                               ],
                                                    'name' => 'eofile',
                                                    'vars' => '',
-                                                   'line' => 259
+                                                   'line' => 306
                                                  }, 'Parse::RecDescent::Rule' ),
                               'type' => bless( {
                                                  'impcount' => 0,
@@ -5896,12 +6472,12 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\'STRING\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 210
+                                                                                             'line' => 257
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 211,
+                                                                                             'line' => 258,
                                                                                              'code' => '{
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
@@ -5927,12 +6503,12 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\'INT\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 218
+                                                                                             'line' => 265
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 219,
+                                                                                             'line' => 266,
                                                                                              'code' => '{
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
@@ -5942,7 +6518,7 @@ _EOC_
         }'
                                                                                            }, 'Parse::RecDescent::Action' )
                                                                                   ],
-                                                                       'line' => 218
+                                                                       'line' => 265
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
                                                                        'number' => '2',
@@ -5958,12 +6534,12 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\'BOOL\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 226
+                                                                                             'line' => 273
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 227,
+                                                                                             'line' => 274,
                                                                                              'code' => '{
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
@@ -5973,7 +6549,7 @@ _EOC_
         }'
                                                                                            }, 'Parse::RecDescent::Action' )
                                                                                   ],
-                                                                       'line' => 226
+                                                                       'line' => 273
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
                                                                        'number' => '3',
@@ -5989,12 +6565,12 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\'IDENT\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 234
+                                                                                             'line' => 281
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 235,
+                                                                                             'line' => 282,
                                                                                              'code' => '{
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
@@ -6004,7 +6580,7 @@ _EOC_
         }'
                                                                                            }, 'Parse::RecDescent::Action' )
                                                                                   ],
-                                                                       'line' => 234
+                                                                       'line' => 281
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
                                                                        'number' => '4',
@@ -6020,16 +6596,16 @@ _EOC_
                                                                                              'hashname' => '__STRING1__',
                                                                                              'description' => '\'ANY\'',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 242
+                                                                                             'line' => 289
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'hashname' => '__ACTION1__',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 243,
+                                                                                             'line' => 290,
                                                                                              'code' => '{ \'\' }'
                                                                                            }, 'Parse::RecDescent::Action' )
                                                                                   ],
-                                                                       'line' => 242
+                                                                       'line' => 289
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
                                                                        'number' => '5',
@@ -6045,15 +6621,15 @@ _EOC_
                                                                                              'hashname' => '__DIRECTIVE1__',
                                                                                              'commitonly' => '',
                                                                                              'lookahead' => 0,
-                                                                                             'line' => 244
+                                                                                             'line' => 291
                                                                                            }, 'Parse::RecDescent::Error' )
                                                                                   ],
-                                                                       'line' => 244
+                                                                       'line' => 291
                                                                      }, 'Parse::RecDescent::Production' )
                                                             ],
                                                  'name' => 'type',
                                                  'vars' => '',
-                                                 'line' => 210
+                                                 'line' => 257
                                                }, 'Parse::RecDescent::Rule' )
                             },
                  '_AUTOTREE' => undef,

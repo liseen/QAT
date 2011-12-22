@@ -8,7 +8,7 @@ use lib "$FindBin::Bin/../lib";
 use Test::Base;
 use JSON;
 
-plan tests => 2* blocks() + 118;
+plan tests => 2* blocks() + 133;
 
 require QAT::Validator::Compiler;
 
@@ -876,3 +876,147 @@ Bad value for "id" for "data" array element: Integer expected.
 Invalid value for "name" for "data" array element: Name expected.
 {"ret": true, "data": [{"id": 2, "name": "zhang", "sex": "ssss"}]}
 Invalid value for "sex" for "data" array element: Allowed values are 'male', 'female'.
+
+
+
+=== TEST 31 true
+
+--- spec
+{ret: true }
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"ret"} );
+(JSON::is_bool($_) && $_ == JSON::true) or die qq{Bad value for "ret": Boolean value true expected.\n};
+}
+for (keys %$_) {
+$_ eq "ret" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+
+--- valid
+{"ret": true}
+--- invalid
+{"ret": false}
+Bad value for "ret": Boolean value true expected.
+
+
+
+=== TEST 32 false
+
+--- spec
+{ret: false }
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"ret"} );
+(JSON::is_bool($_) && $_ == JSON::false) or die qq{Bad value for "ret": Boolean value false expected.\n};
+}
+for (keys %$_) {
+$_ eq "ret" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+
+--- valid
+{"ret": false}
+--- invalid
+{"ret": true}
+Bad value for "ret": Boolean value false expected.
+
+
+
+=== TEST 33 null
+--- spec
+{foo: null}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"foo"} );
+!defined or die qq{Bad value for "foo": null expected.\n};
+}
+for (keys %$_) {
+$_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{"foo": null}
+--- invalid
+{"foo": "abcda"}
+Bad value for "foo": null expected.
+
+
+
+=== TEST 34 number
+--- spec
+{foo: 10.2}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"foo"} );
+$_ == 10.2 or die qq{Bad value for "foo": number 10.2 expected.\n};
+}
+for (keys %$_) {
+$_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{"foo": 10.2}
+--- invalid
+{"foo": 1}
+Bad value for "foo": number 10.2 expected.
+{"foo": 10}
+Bad value for "foo": number 10.2 expected.
+
+
+
+=== TEST 35 minus number
+--- spec
+{foo: -0.2}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"foo"} );
+$_ == -0.2 or die qq{Bad value for "foo": number -0.2 expected.\n};
+}
+for (keys %$_) {
+$_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{"foo": -0.2}
+--- invalid
+{"foo": 10.2}
+Bad value for "foo": number -0.2 expected.
+{"foo": 0.2}
+Bad value for "foo": number -0.2 expected.
+
+
+
+=== TEST 36 string
+--- spec
+{foo: "abcd"}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"foo"} );
+$_ eq "abcd" or die qq{Bad value for "foo": string "abcd" expected.\n};
+}
+for (keys %$_) {
+$_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{"foo": "abcd"}
+--- invalid
+{"foo": 10}
+Bad value for "foo": string "abcd" expected.
+{"foo": "abc"}
+Bad value for "foo": string "abcd" expected.
+
+

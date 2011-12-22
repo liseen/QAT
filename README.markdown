@@ -48,21 +48,39 @@ Spec Syntax
 ===
 
     validator: lhs(?) value <commit> eofile
+
     lhs: variable '~~'
+
     variable: { Text::Balanced::extract_variable($text) }
-    value: hash | array | scalar
+
+    value: hash
+            | array
+            | scalar
+            | 'true'
+            | 'false'
+            | 'null'
+            | /\-?\d+(\.\d+)?/
+            | { extract_quotelike($text) }
+
     hash: '{' pair(s? /,/) /,?/ '}' attr(s?)
+
     pair: key ':' value
+
     key: { extract_delimited($text, '"') }
             | ident
+
     array: '[' <commit> array_elem ']' attr(s?)
+
     array_elem: value
 
     scalar: type <commit> attr(s?)
+
     type: 'STRING'|'INT'| 'IDENT' | 'BOOL'| 'ANY'
 
     attr: ':' ident '(' argument(s /,/) ')'  | ':' ident
+
     ident: /^[A-Za-z]\w*/
+
     argument: /^\d+/
             | '[]'
             | variable
@@ -116,11 +134,11 @@ Spec Samples:
 
     4. nonempty hash
     {"foo":STRING} :nonempty
-        
+
         --- valid
         {"foo": "hello"}
         {"foo": null}
-        
+
         --- invalid
         null
 
@@ -130,6 +148,7 @@ Spec Samples:
         --- valid
         [1,2]
         [0]
+
         --- invalid
         ["hello"]
         [1,2,"hello"]
@@ -150,6 +169,7 @@ Spec Samples:
 
         --- valid
         2011-01-20
+
         --- invalid
         2011-aaa
 
@@ -159,6 +179,7 @@ Spec Samples:
         --- valid
         "password"
         "login"
+
         --- invalid
         "abcd"
 
@@ -174,8 +195,8 @@ Spec Samples:
         --- invalid
         { "ret": true }
         { "ret": false, "errcode": 100, "errmsg": "No such user." }
-    
-    11. complex sample 2  
+
+    11. complex sample 2
     {
         ret: BOOL :allowed('true') :required,
         data: [
@@ -196,6 +217,12 @@ Spec Samples:
         {"ret": true, "data": [{"id": "aaa", "name": "zhang", "sex": "male"}]}
         {"ret": true, "data": [{"id": 2, "name": "", "sex": "male"}]}
         {"ret": true, "data": [{"id": 2, "name": "zhang", "sex": "ssss"}]}
+
+    11. json data also is spec
+        { "ret": true}
+        { "foo": "abcd"}
+        { "foo": null}
+        { "foo": 10.24}
 
 Install
 ===

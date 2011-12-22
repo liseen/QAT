@@ -14,7 +14,54 @@ variable: { Text::Balanced::extract_variable($text) }
 value: hash
      | array
      | scalar
-     | <error>
+     | 'true'
+        {
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+(JSON::is_bool(\$_) && \$_ == JSON::true) or die qq{Bad value$for_topic: Boolean value true expected.\\n};
+_EOC_
+            $code;
+        }
+    | 'false'
+        {
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+(JSON::is_bool(\$_) && \$_ == JSON::false) or die qq{Bad value$for_topic: Boolean value false expected.\\n};
+_EOC_
+            $code;
+        }
+    | 'null'
+        {
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+!defined or die qq{Bad value$for_topic: null expected.\\n};
+_EOC_
+            $code;
+        }
+    | /\-?\d+(\.\d+)?/
+        {
+            my $num = $item[1];
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+\$_ == $num or die qq{Bad value$for_topic: number $num expected.\\n};
+_EOC_
+            $code;
+        }
+    | { extract_quotelike($text) }
+        {
+            my $str = $item[1];
+            my $topic = $arg{topic};
+            my $for_topic = $topic ? " for $topic" : "";
+            my $code = <<"_EOC_";
+\$_ eq $str or die qq{Bad value$for_topic: string $str expected.\\n};
+_EOC_
+            $code;
+        }
+    | <error>
 
 hash: '{' <commit> pair(s? /,/) /,?/ '}' attr(s?)
     {
