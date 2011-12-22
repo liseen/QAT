@@ -71,6 +71,9 @@ Spec Syntax
 
     eofile: /^\Z/
 
+    Details see:
+        http://search.cpan.org/~dconway/Parse-RecDescent-1.965001/lib/Parse/RecDescent.pm
+        http://search.cpan.org/~adamk/Text-Balanced-2.02/lib/Text/Balanced.pm
 
 Spec Samples:
 
