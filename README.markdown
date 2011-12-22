@@ -74,6 +74,7 @@ Spec Syntax
 
 Spec Samples:
 
+    1. nonempty string
     STRING :nonempty
 
         --- valid
@@ -82,6 +83,7 @@ Spec Samples:
         --- invalid
         ""
 
+    2. simple hash
     { foo: STRING }
 
         --- valid
@@ -95,6 +97,7 @@ Spec Samples:
         32
         []
 
+    3. hash required
     { "foo": STRING } :required
 
         --- valid
@@ -108,8 +111,17 @@ Spec Samples:
         []
         32
 
+    4. nonempty hash
     {"foo":STRING} :nonempty
+        
+        --- valid
+        {"foo": "hello"}
+        {"foo": null}
+        
+        --- invalid
+        null
 
+    5. required array
     [INT] :required
 
         --- valid
@@ -121,14 +133,16 @@ Spec Samples:
         [1.32]
         null
 
+    6. nonempty array
     [INT :required] :nonempty
 
         --- valid
         [1]
 
         --- invalid
-        [] conflict nonempty
+        []
 
+    7. regex matched string
     STRING :match(/^\d{4}-\d{2}-\d{2}$/, 'Date')
 
         --- valid
@@ -136,6 +150,7 @@ Spec Samples:
         --- invalid
         2011-aaa
 
+    9. allowed string
     STRING :allowed('password', 'login', 'anonymous')
 
         --- valid
@@ -144,6 +159,7 @@ Spec Samples:
         --- invalid
         "abcd"
 
+    10.  complex sampe 1
     {
         ret: BOOL :allowed('false') :required,
         errcode: INT :required,
@@ -155,7 +171,8 @@ Spec Samples:
         --- invalid
         { "ret": true }
         { "ret": false, "errcode": 100, "errmsg": "No such user." }
-
+    
+    11. complex sample 2  
     {
         ret: BOOL :allowed('true') :required,
         data: [
@@ -180,7 +197,7 @@ Spec Samples:
 Install
 ===
 
-    Extra dependencies in inc directory.
+    Extra dependencies are in inc directory.
 
     use FindBin;
     use lib "$FindBin::Bin/../inc";
