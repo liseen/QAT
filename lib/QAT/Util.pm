@@ -4,8 +4,10 @@ use strict;
 use warnings;
 #use Smart::Comments;
 
+use URI::Escape;
 use LWP::UserAgent;
 use HTTP::Request::Common;
+use File::Slurp qw/read_file/;
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -15,49 +17,70 @@ sub make_http_request {
     my $args = shift;
     ### $args
 
+    my $method = $args->{method} || '';
     my $url = $args->{url};
-    my $form = $args->{form} || '';
-    my $data = $args->{data} || '';
-    my $header = $args->{header} || '';
 
-    if ($form && $data) {
-        die "form && data fields.\n";
+    my $header = $args->{header} || '';
+    my $data = $args->{data} || '';
+    my $data_urlencode = $args->{data_urlencode} || '';
+    my $form = $args->{form} || '';
+
+    if ($form && $method eq 'GET') {
+        die "Can't use GET method send form data.\n";
     }
 
-    my $method = $form || $data ? 'POST' : 'GET';
+    if (!$method) {
+        $method = $form || $data || $data_urlencode ? 'POST' : 'GET';
+    }
 
-    $header =~ s/(?:^\s+|\s+$)//gs; #把前后的空格(串首尾的)消去
+    $header =~ s/^\s+|\s+$//gs;
+
     my @headers = split /\n/, $header;
     @headers = map {
                 my ($k, $v) = split /\s*:\s*/;
                 {$k => $v}
             } @headers;
 
-    if ($method eq 'GET') {
-        return GET $url, @headers;
-    } else {
-        if ($data) {
-            $data =~ s/(?:^\s+|\s+$)//gs;
-            my @lines = split /\n/, $data;
-            my @data = map {
-                            my ($k, $v) = split /\s*=/;
-                            {$k => $v}
-                       } @lines;
-            return POST $url, \@data, @headers;
-        } else {
-            $form =~ s/(?:^\s+|\s+$)//gs;
-            my @lines = split /\n/, $form;
-            my @content = map {
-                        my ($k, $v) = split /\s*=/;
-                        if ($v =~ /^@(.*$)/) {
-                            $v = [$1];
-                        }
-                        {$k => $v};
-                   } @lines;
-            return POST $url,
-                        Content_Type => 'form-data', @headers,
-                        Content => \@content;
+    if ($data) {
+        if ($data =~ /^@(.*)$/) {
+            $data = read_file($1);
         }
+
+        if ($method eq 'GET') {
+            $url = $url . "?" . $data;
+            return GET $url, @headers;
+        } else {
+            return POST $url, @headers, Content => $data;
+        }
+    } elsif ($data_urlencode) {
+        if ($data_urlencode =~ /^@(.*)$/) {
+            $data_urlencode = read_file($1);
+        }
+        $data_urlencode = uri_escape($data_urlencode);
+
+        if ($method eq 'GET') {
+            $url = $url . "?" . $data_urlencode;
+            return GET $url, @headers;
+        } else {
+            return POST $url, @headers, Content => $data_urlencode;
+        }
+    } elsif ($form) {
+        $form =~ s/^\s+|\s+$//gs;
+
+        my @lines = split /\n/, $form;
+        my @content = map {
+                    my ($k, $v) = split /\s*=/, $_, 2;
+                    if ($v =~ /^@(.*$)/) {
+                        $v = [$1];
+                    }
+                    {$k => $v};
+                } @lines;
+
+        return POST $url,
+                    Content_Type => 'form-data', @headers,
+                    Content => \@content;
+    } else {
+        return GET $url, @headers;
     }
 }
 

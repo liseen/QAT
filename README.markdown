@@ -6,6 +6,21 @@ Name
 SAYNOPSIS
 ===
 
+    QAT::Util
+
+        my $res = QAT::Util::do_http_request({
+            url => 'http://www.qunar.com/'
+        });
+
+        # check request is success
+        $res->is_success
+
+        # get http code
+        $res->code
+
+        # get location header
+        $res->header('Location');
+
     QAT::Validaotr
 
         use QAT::Validator;
