@@ -5,6 +5,7 @@ use warnings;
 
 #use Smart::Comments;
 use JSON;
+use Encode;
 use QAT::Validator::Compiler;
 #use QTest::Validator::QuasiQuote;
 

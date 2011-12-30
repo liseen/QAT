@@ -197,7 +197,7 @@ _EOC_
 
         if (my $args = delete $attrs->{allowed}) {
             my $values = join ', ', @$args;
-            my $expr = join ' or ', map { "\$_ eq $_" } @$args;
+            my $expr = join ' or ', map { "\$_ eq $_ or (Encode::is_utf8(\$_) && Encode::encode_utf8(\$_) eq $_)" } @$args;
             $code2 .= "$expr or die qq{Invalid value$for_topic: Allowed values are $values.\\n};\n";
         }
 
@@ -1016,7 +1016,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             my $code = <<"_EOC_";
-\$_ eq $str or die qq{Bad value$for_topic: string $str expected.\\n};
+\$_ eq $str or (Encode::is_utf8(\$_) && Encode::encode_utf8(\$_) eq $str) or die qq{Bad value$for_topic: string $str expected.\\n};
 _EOC_
             $code;
         };
@@ -5110,7 +5110,7 @@ _EOC_
 
         if (my $args = delete $attrs->{allowed}) {
             my $values = join \', \', @$args;
-            my $expr = join \' or \', map { "\\$_ eq $_" } @$args;
+            my $expr = join \' or \', map { "\\$_ eq $_ or (Encode::is_utf8(\\$_) && Encode::encode_utf8(\\$_) eq $_)" } @$args;
             $code2 .= "$expr or die qq{Invalid value$for_topic: Allowed values are $values.\\\\n};\\n";
         }
 
@@ -5407,7 +5407,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             my $code = <<"_EOC_";
-\\$_ eq $str or die qq{Bad value$for_topic: string $str expected.\\\\n};
+\\$_ eq $str or (Encode::is_utf8(\\$_) && Encode::encode_utf8(\\$_) eq $str) or die qq{Bad value$for_topic: string $str expected.\\\\n};
 _EOC_
             $code;
         }'

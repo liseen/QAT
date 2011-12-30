@@ -8,12 +8,11 @@ use lib "$FindBin::Bin/../lib";
 use Test::Base;
 use JSON;
 
+my $json = JSON->new->utf8->allow_nonref;
 
 use QAT::Validator;
 
-plan tests => 7;
-
-my $json = JSON->new->utf8->allow_nonref;
+plan tests => 9;
 
 run {
     my $block = shift;
@@ -25,27 +24,28 @@ run {
 
     my $valid = $block->valid;
     for my $ln (split /\n/, $valid) {
-        ### $ln
+        #### $ln
         my $data = $json->decode($ln);
         eval {
             $validator->validate($data);
         };
-        ok !$@, $name . ": " .  $ln;
+        ok !$@, $name . ": " .  $@;
     }
 
-    my $invalid = $block->invalid;
+    my $invalid = $block->invalid || '';
     for my $ln (split /\n/, $invalid) {
-        ### $ln
+        #### $ln
         my $data = $json->decode($ln);
         eval {
             $validator->validate($data);
         };
-        ok $@, $name . ": " . $ln;
+        ok $@, $name . ": " . $@;
     }
 };
 
 
 __END__
+
 === TEST 1
 --- spec
 { foo: STRING }
@@ -58,3 +58,19 @@ null
 {"foo2":32}
 []
 32
+
+
+
+=== TEST 2
+--- spec
+{"errcode": INT, "errmsg": "invalid request", "ret": BOOL}
+--- valid
+{"errcode":"100","errmsg":"invalid request","ret":false}
+
+
+
+=== TEST 3
+--- spec
+{"errcode": INT, "errmsg":"无效请求", "ret": BOOL}
+--- valid
+{"errcode":"100","errmsg":"无效请求","ret":false}
