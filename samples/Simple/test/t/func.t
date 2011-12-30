@@ -68,7 +68,7 @@ http://upd.qunar.com/api/imgup/iapp?app=test
 
 
 
-=== TEST 6 response, 返回结果， 返回结果， JSON解析后数据结构比较， 相等
+=== TEST 6 response, 返回结果， JSON解析后数据结构比较， 相等
 --- url
 http://upd.qunar.com/api/imgup/iapp?app=test
 --- response_code
