@@ -74,7 +74,7 @@ http://upd.qunar.com/api/imgup/iapp?app=test
 --- response_code
 200
 --- response_deep
-{"errcode":"100","errmsg":"无效请求","ret":false}
+{"errmsg":"无效请求", "errcode":"100", "ret":false}
 
 
 
