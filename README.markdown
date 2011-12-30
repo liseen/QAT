@@ -248,6 +248,13 @@ Install
     use lib "$FindBin::Bin/../inc";
     use lib "$FindBin::Bin/../lib";
 
+Samples
+===
+
+    Simple project
+    see:
+        samples/Simple
+
 Author
 ===
 
