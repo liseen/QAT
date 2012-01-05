@@ -2,22 +2,21 @@ use strict;
 use warnings;
 
 use FindBin;
-use lib "$FindBin::Bin/../inc";
-use lib "$FindBin::Bin/../lib";
 
 # 加载QAT所需
 use lib "$FindBin::Bin/../../../../inc";
 use lib "$FindBin::Bin/../../../../lib";
 
-use Simple::Test;
+use QAT::HTTP::Test;
 
 plan tests => 1 * blocks() + 7;
 
 $ENV{TEST_ENV_HOST} = 'www.qunar.com';
 $ENV{TEST_ENV_PORT} = 80;
 
+filters_delay;
+filters qw/chomp qat_expand_var/;
 
-filters qw/chomp/;
 run_blocks;
 
 __END__
@@ -118,3 +117,21 @@ Server: QWS/1.0
 Content-Type: text/html
 
 
+
+=== TEST 11 set context variable from regular expresssion
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_like
+(?<TEST_CONTEXT_ERRCODE>\d+)
+
+
+
+=== TEST 12 get context variable
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_like
+$TEST_CONTEXT_ERRCODE

@@ -1,4 +1,4 @@
-package Simple::Test;
+package QAT::HTTP::Test;
 
 use strict;
 use warnings;
@@ -75,15 +75,25 @@ sub run_block ($) {
 
     if ($response_like) {
         my $pat = qr/$response_like/;
-        ok($res->content =~ $pat, "$name response like");
+        if ($res->content =~ $pat) {
+            while (my ($k, $v) = each %+) {
+                $ENV{$k} = $v;
+                ### key: $k
+                ### value: $v
+            }
+            ok(1, "$name response like");
+        } else {
+            ok(0, "$name response like");
+        }
     }
 
     if ($response_validator) {
         my $content = $res->content;
-        my $flag = utf8::is_utf8($content);
-        ### $flag
-        $flag = utf8::is_utf8($response_validator);
-        ### $flag
+
+        #my $flag = utf8::is_utf8($content);
+        # $flag
+        #$flag = utf8::is_utf8($response_validator);
+        # $flag
         #
         my $data = decode_json($res->content);
         eval {
@@ -97,10 +107,28 @@ sub run_block ($) {
 
 sub run_blocks () {
     for my $block (blocks) {
+        if (!$block->is_filtered) {
+            $block->run_filters;;
+        }
         run_block($block);
     }
 }
 
+package  QAT::HTTP::Test::Filter;
+
+use Test::Base::Filter -base;
+
+sub qat_expand_var {
+    my $v = shift;
+
+    $v =~ s/\$(TEST_[_A-Z0-9]+)/
+        if (!defined $ENV{$1}) {
+            die "No environment $1 defined.\n";
+        }
+    $ENV{$1}/eg;
+
+    $v;
+}
 
 1;
 
