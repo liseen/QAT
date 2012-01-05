@@ -75,8 +75,8 @@ sub run_http_block ($) {
     my $url = $block->url;
 
     if (!$url) {
-        my $host = $block->host || $ENV{TEST_ENV_HOST};
-        my $port = $block->port || $ENV{TEST_ENV_PORT} || 80;
+        my $host = $block->host || $ENV{QAT_ENV_HOST};
+        my $port = $block->port || $ENV{QAT_ENV_PORT} || 80;
         my $uri = $block->uri;
         $url = "http://$host:$port/$uri";
     }
@@ -165,7 +165,7 @@ use Test::Base::Filter -base;
 sub qat_expand_var {
     my $v = shift;
 
-    $v =~ s/\$(TEST_[_A-Z0-9]+)/
+    $v =~ s/\$(QAT_[_A-Z0-9]+)/
         if (!defined $ENV{$1}) {
             die "No environment $1 defined.\n";
         }

@@ -11,8 +11,8 @@ use QAT::Test;
 
 plan tests => 1 * blocks() + 9;
 
-$ENV{TEST_ENV_HOST} = 'www.qunar.com';
-$ENV{TEST_ENV_PORT} = 80;
+$ENV{QAT_ENV_HOST} = 'www.qunar.com';
+$ENV{QAT_ENV_PORT} = 80;
 
 filters_delay;
 filters qw/chomp qat_expand_var/;
@@ -41,7 +41,7 @@ www.qunar.com
 
 
 
-=== TEST 3 使用环境变量TEST_ENV_HOST TEST_ENV_PORT
+=== TEST 3 使用环境变量QAT_ENV_HOST QAT__ENV_PORT
 --- uri
 /
 --- response_code
@@ -124,7 +124,7 @@ http://upd.qunar.com/api/imgup/iapp?app=test
 --- response_code
 200
 --- response_like
-(?<TEST_CONTEXT_ERRCODE>\d+)
+(?<QAT_CONTEXT_ERRCODE>\d+)
 
 
 
@@ -134,12 +134,12 @@ http://upd.qunar.com/api/imgup/iapp?app=test
 --- response_code
 200
 --- response_like
-$TEST_CONTEXT_ERRCODE
+$QAT_CONTEXT_ERRCODE
 
 
 === TEST 13 test sql
 --- db_dsn
-DBI:mysql:database=$TEST_ENV_DB_NAME;host=$TEST_ENV_DB_HOST;port=$TEST_ENV_DB_PORT;mysql_enable_utf8=1
+DBI:mysql:database=$QAT_ENV_DB_NAME;host=$QAT_ENV_DB_HOST;port=$QAT_ENV_DB_PORT;mysql_enable_utf8=1
 --- db_user
 user
 --- db_password
