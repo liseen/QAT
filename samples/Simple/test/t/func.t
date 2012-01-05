@@ -42,7 +42,7 @@ www.qunar.com
 
 
 
-=== TEST 3 使用环境变量TEST_HOST TEST_PORT
+=== TEST 3 使用环境变量TEST_ENV_HOST TEST_ENV_PORT
 --- uri
 /
 --- response_code
