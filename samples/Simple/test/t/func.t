@@ -7,9 +7,9 @@ use FindBin;
 use lib "$FindBin::Bin/../../../../inc";
 use lib "$FindBin::Bin/../../../../lib";
 
-use QAT::HTTP::Test;
+use QAT::Test;
 
-plan tests => 1 * blocks() + 7;
+plan tests => 1 * blocks() + 9;
 
 $ENV{TEST_ENV_HOST} = 'www.qunar.com';
 $ENV{TEST_ENV_PORT} = 80;
@@ -135,3 +135,17 @@ http://upd.qunar.com/api/imgup/iapp?app=test
 200
 --- response_like
 $TEST_CONTEXT_ERRCODE
+
+
+=== TEST 13 test sql
+--- db_dsn
+DBI:mysql:database=$TEST_ENV_DB_NAME;host=$TEST_ENV_DB_HOST;port=$TEST_ENV_DB_PORT;mysql_enable_utf8=1
+--- db_user
+user
+--- db_password
+pass
+--- sql
+select * from aaa limit 1;
+--- response_like
+.+
+--- SKIP
