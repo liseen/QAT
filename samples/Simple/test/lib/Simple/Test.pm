@@ -22,8 +22,8 @@ sub run_block ($) {
     my $url = $block->url;
 
     if (!$url) {
-        my $host = $block->host || $ENV{TEST_HOST};
-        my $port = $block->port || $ENV{TEST_PORT} || 80;
+        my $host = $block->host || $ENV{TEST_ENV_HOST};
+        my $port = $block->port || $ENV{TEST_ENV_PORT} || 80;
         my $uri = $block->uri;
         $url = "http://$host:$port/$uri";
     }

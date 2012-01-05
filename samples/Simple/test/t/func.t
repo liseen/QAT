@@ -13,8 +13,8 @@ use Simple::Test;
 
 plan tests => 1 * blocks() + 7;
 
-$ENV{TEST_HOST} = 'www.qunar.com';
-$ENV{TEST_PORT} = 80;
+$ENV{TEST_ENV_HOST} = 'www.qunar.com';
+$ENV{TEST_ENV_PORT} = 80;
 
 
 filters qw/chomp/;
