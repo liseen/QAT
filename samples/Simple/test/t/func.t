@@ -41,7 +41,7 @@ www.qunar.com
 
 
 
-=== TEST 3 使用环境变量QAT_ENV_HOST QAT__ENV_PORT
+=== TEST 3 使用环境变量QAT_ENV_HOST QAT_ENV_PORT
 --- uri
 /
 --- response_code

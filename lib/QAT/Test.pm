@@ -14,6 +14,14 @@ our @EXPORT = qw/run_blocks/;
 
 my $json = JSON->new->utf8->allow_nonref;
 
+our %DBHCache;
+
+END {
+    for my $dbh (values %DBHCache) {
+        $dbh->disconnect;
+    }
+}
+
 sub check_response ($$) {
     my ($block, $content) = @_;
 
@@ -123,8 +131,15 @@ sub run_db_block ($) {
 
     my $sql = $block->sql;
 
-    require DBI;
-    my $dbh = DBI->connect($db_dsn, $db_user, $db_password);
+    my $dbh;
+    my $db_key = $db_dsn . $db_user . $db_password;
+    if (exists $DBHCache{$db_key}) {
+        $dbh = $DBHCache{$db_key};
+    } else {
+        require DBI;
+        $dbh = DBI->connect($db_dsn, $db_user, $db_password);
+    }
+
 
     my $data = [];
 
@@ -135,7 +150,6 @@ sub run_db_block ($) {
     }
     $sth->finish();
 
-    $dbh->disconnect();
     my $r = {ret => JSON::true, data => $data };
 
     my $content = encode_json $r;
