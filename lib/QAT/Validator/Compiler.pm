@@ -197,7 +197,7 @@ _EOC_
 
         if (my $args = delete $attrs->{allowed}) {
             my $values = join ', ', @$args;
-            my $expr = join ' or ', map { "\$_ eq $_ or (Encode::is_utf8(\$_) && Encode::encode_utf8(\$_) eq $_)" } @$args;
+            my $expr = join ' or ', map { "\$_ eq $_" } @$args;
             $code2 .= "$expr or die qq{Invalid value$for_topic: Allowed values are $values.\\n};\n";
         }
 
@@ -1016,7 +1016,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             my $code = <<"_EOC_";
-\$_ eq $str or (Encode::is_utf8(\$_) && Encode::encode_utf8(\$_) eq $str) or die qq{Bad value$for_topic: string $str expected.\\n};
+\$_ eq $str or die qq{Bad value$for_topic: string $str expected.\\n};
 _EOC_
             $code;
         };
@@ -5046,7 +5046,7 @@ package QAT::Validator::Compiler; sub new { my $self = bless( {
                                                    'opcount' => 0,
                                                    'prods' => [
                                                                 bless( {
-                                                                         'number' => '0',
+                                                                         'number' => 0,
                                                                          'strcount' => 0,
                                                                          'dircount' => 1,
                                                                          'uncommit' => undef,
@@ -5110,7 +5110,7 @@ _EOC_
 
         if (my $args = delete $attrs->{allowed}) {
             my $values = join \', \', @$args;
-            my $expr = join \' or \', map { "\\$_ eq $_ or (Encode::is_utf8(\\$_) && Encode::encode_utf8(\\$_) eq $_)" } @$args;
+            my $expr = join \' or \', map { "\\$_ eq $_" } @$args;
             $code2 .= "$expr or die qq{Invalid value$for_topic: Allowed values are $values.\\\\n};\\n";
         }
 
@@ -5159,7 +5159,7 @@ _EOC_
                                                      'opcount' => 0,
                                                      'prods' => [
                                                                   bless( {
-                                                                           'number' => '0',
+                                                                           'number' => 0,
                                                                            'strcount' => 0,
                                                                            'dircount' => 0,
                                                                            'uncommit' => undef,
@@ -5192,7 +5192,7 @@ _EOC_
                                                   'opcount' => 0,
                                                   'prods' => [
                                                                bless( {
-                                                                        'number' => '0',
+                                                                        'number' => 0,
                                                                         'strcount' => 0,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5212,7 +5212,7 @@ _EOC_
                                                                         'line' => undef
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '1',
+                                                                        'number' => 1,
                                                                         'strcount' => 0,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5232,7 +5232,7 @@ _EOC_
                                                                         'line' => 15
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '2',
+                                                                        'number' => 2,
                                                                         'strcount' => 0,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5252,7 +5252,7 @@ _EOC_
                                                                         'line' => 16
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '3',
+                                                                        'number' => 3,
                                                                         'strcount' => 1,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5284,7 +5284,7 @@ _EOC_
                                                                         'line' => 17
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '4',
+                                                                        'number' => 4,
                                                                         'strcount' => 1,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5316,7 +5316,7 @@ _EOC_
                                                                         'line' => 26
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '5',
+                                                                        'number' => 5,
                                                                         'strcount' => 1,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5348,7 +5348,7 @@ _EOC_
                                                                         'line' => 35
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '6',
+                                                                        'number' => 6,
                                                                         'strcount' => 0,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5384,7 +5384,7 @@ _EOC_
                                                                         'line' => 44
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '7',
+                                                                        'number' => 7,
                                                                         'strcount' => 0,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5407,7 +5407,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             my $code = <<"_EOC_";
-\\$_ eq $str or (Encode::is_utf8(\\$_) && Encode::encode_utf8(\\$_) eq $str) or die qq{Bad value$for_topic: string $str expected.\\\\n};
+\\$_ eq $str or die qq{Bad value$for_topic: string $str expected.\\\\n};
 _EOC_
             $code;
         }'
@@ -5416,7 +5416,7 @@ _EOC_
                                                                         'line' => 54
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '8',
+                                                                        'number' => 8,
                                                                         'strcount' => 0,
                                                                         'dircount' => 1,
                                                                         'uncommit' => 0,
@@ -5448,7 +5448,7 @@ _EOC_
                                                 'opcount' => 0,
                                                 'prods' => [
                                                              bless( {
-                                                                      'number' => '0',
+                                                                      'number' => 0,
                                                                       'strcount' => 1,
                                                                       'dircount' => 0,
                                                                       'uncommit' => undef,
@@ -5495,7 +5495,7 @@ _EOC_
                                                  'opcount' => 0,
                                                  'prods' => [
                                                               bless( {
-                                                                       'number' => '0',
+                                                                       'number' => 0,
                                                                        'strcount' => 3,
                                                                        'dircount' => 2,
                                                                        'uncommit' => undef,
@@ -5584,7 +5584,7 @@ _EOC_
                                                                        'line' => undef
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '1',
+                                                                       'number' => 1,
                                                                        'strcount' => 1,
                                                                        'dircount' => 1,
                                                                        'uncommit' => undef,
@@ -5624,7 +5624,7 @@ _EOC_
                                                                        'line' => 295
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '2',
+                                                                       'number' => 2,
                                                                        'strcount' => 0,
                                                                        'dircount' => 2,
                                                                        'uncommit' => 0,
@@ -5660,7 +5660,7 @@ _EOC_
                                                   'opcount' => 0,
                                                   'prods' => [
                                                                bless( {
-                                                                        'number' => '0',
+                                                                        'number' => 0,
                                                                         'strcount' => 0,
                                                                         'dircount' => 0,
                                                                         'uncommit' => undef,
@@ -5695,7 +5695,7 @@ _EOC_
                                                 'opcount' => 0,
                                                 'prods' => [
                                                              bless( {
-                                                                      'number' => '0',
+                                                                      'number' => 0,
                                                                       'strcount' => 0,
                                                                       'dircount' => 0,
                                                                       'uncommit' => undef,
@@ -5719,7 +5719,7 @@ _EOC_
                                                                       'line' => undef
                                                                     }, 'Parse::RecDescent::Production' ),
                                                              bless( {
-                                                                      'number' => '1',
+                                                                      'number' => 1,
                                                                       'strcount' => 0,
                                                                       'dircount' => 0,
                                                                       'uncommit' => undef,
@@ -5754,7 +5754,7 @@ _EOC_
                                                       'opcount' => 0,
                                                       'prods' => [
                                                                    bless( {
-                                                                            'number' => '0',
+                                                                            'number' => 0,
                                                                             'strcount' => 0,
                                                                             'dircount' => 1,
                                                                             'uncommit' => undef,
@@ -5811,7 +5811,7 @@ _EOC_
                                                                             'line' => undef
                                                                           }, 'Parse::RecDescent::Production' ),
                                                                    bless( {
-                                                                            'number' => '1',
+                                                                            'number' => 1,
                                                                             'strcount' => 0,
                                                                             'dircount' => 1,
                                                                             'uncommit' => 0,
@@ -5843,7 +5843,7 @@ _EOC_
                                                      'opcount' => 0,
                                                      'prods' => [
                                                                   bless( {
-                                                                           'number' => '0',
+                                                                           'number' => 0,
                                                                            'strcount' => 0,
                                                                            'dircount' => 0,
                                                                            'uncommit' => undef,
@@ -5865,7 +5865,7 @@ _EOC_
                                                                            'line' => undef
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
-                                                                           'number' => '1',
+                                                                           'number' => 1,
                                                                            'strcount' => 1,
                                                                            'dircount' => 0,
                                                                            'uncommit' => undef,
@@ -5884,7 +5884,7 @@ _EOC_
                                                                            'line' => 300
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
-                                                                           'number' => '2',
+                                                                           'number' => 2,
                                                                            'strcount' => 0,
                                                                            'dircount' => 0,
                                                                            'uncommit' => undef,
@@ -5904,7 +5904,7 @@ _EOC_
                                                                            'line' => 301
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
-                                                                           'number' => '3',
+                                                                           'number' => 3,
                                                                            'strcount' => 0,
                                                                            'dircount' => 0,
                                                                            'uncommit' => undef,
@@ -5928,7 +5928,7 @@ _EOC_
                                                                            'line' => 302
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
-                                                                           'number' => '4',
+                                                                           'number' => 4,
                                                                            'strcount' => 0,
                                                                            'dircount' => 0,
                                                                            'uncommit' => undef,
@@ -5952,7 +5952,7 @@ _EOC_
                                                                            'line' => 303
                                                                          }, 'Parse::RecDescent::Production' ),
                                                                   bless( {
-                                                                           'number' => '5',
+                                                                           'number' => 5,
                                                                            'strcount' => 0,
                                                                            'dircount' => 1,
                                                                            'uncommit' => 0,
@@ -5985,7 +5985,7 @@ _EOC_
                                                   'opcount' => 0,
                                                   'prods' => [
                                                                bless( {
-                                                                        'number' => '0',
+                                                                        'number' => 0,
                                                                         'strcount' => 2,
                                                                         'dircount' => 1,
                                                                         'uncommit' => undef,
@@ -6096,7 +6096,7 @@ _EOC_
                                                                         'line' => undef
                                                                       }, 'Parse::RecDescent::Production' ),
                                                                bless( {
-                                                                        'number' => '1',
+                                                                        'number' => 1,
                                                                         'strcount' => 0,
                                                                         'dircount' => 2,
                                                                         'uncommit' => 0,
@@ -6135,7 +6135,7 @@ _EOC_
                                                  'opcount' => 0,
                                                  'prods' => [
                                                               bless( {
-                                                                       'number' => '0',
+                                                                       'number' => 0,
                                                                        'strcount' => 2,
                                                                        'dircount' => 2,
                                                                        'uncommit' => undef,
@@ -6290,7 +6290,7 @@ _EOC_
                                                        'opcount' => 0,
                                                        'prods' => [
                                                                     bless( {
-                                                                             'number' => '0',
+                                                                             'number' => 0,
                                                                              'strcount' => 0,
                                                                              'dircount' => 0,
                                                                              'uncommit' => undef,
@@ -6336,7 +6336,7 @@ _EOC_
                                                  'opcount' => 0,
                                                  'prods' => [
                                                               bless( {
-                                                                       'number' => '0',
+                                                                       'number' => 0,
                                                                        'strcount' => 1,
                                                                        'dircount' => 1,
                                                                        'uncommit' => undef,
@@ -6390,7 +6390,7 @@ _EOC_
                                                                        'line' => undef
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '1',
+                                                                       'number' => 1,
                                                                        'strcount' => 0,
                                                                        'dircount' => 2,
                                                                        'uncommit' => 0,
@@ -6426,7 +6426,7 @@ _EOC_
                                                    'opcount' => 0,
                                                    'prods' => [
                                                                 bless( {
-                                                                         'number' => '0',
+                                                                         'number' => 0,
                                                                          'strcount' => 0,
                                                                          'dircount' => 0,
                                                                          'uncommit' => undef,
@@ -6459,7 +6459,7 @@ _EOC_
                                                  'opcount' => 0,
                                                  'prods' => [
                                                               bless( {
-                                                                       'number' => '0',
+                                                                       'number' => 0,
                                                                        'strcount' => 1,
                                                                        'dircount' => 0,
                                                                        'uncommit' => undef,
@@ -6490,7 +6490,7 @@ _EOC_
                                                                        'line' => undef
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '1',
+                                                                       'number' => 1,
                                                                        'strcount' => 1,
                                                                        'dircount' => 0,
                                                                        'uncommit' => undef,
@@ -6521,7 +6521,7 @@ _EOC_
                                                                        'line' => 265
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '2',
+                                                                       'number' => 2,
                                                                        'strcount' => 1,
                                                                        'dircount' => 0,
                                                                        'uncommit' => undef,
@@ -6552,7 +6552,7 @@ _EOC_
                                                                        'line' => 273
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '3',
+                                                                       'number' => 3,
                                                                        'strcount' => 1,
                                                                        'dircount' => 0,
                                                                        'uncommit' => undef,
@@ -6583,7 +6583,7 @@ _EOC_
                                                                        'line' => 281
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '4',
+                                                                       'number' => 4,
                                                                        'strcount' => 1,
                                                                        'dircount' => 0,
                                                                        'uncommit' => undef,
@@ -6608,7 +6608,7 @@ _EOC_
                                                                        'line' => 289
                                                                      }, 'Parse::RecDescent::Production' ),
                                                               bless( {
-                                                                       'number' => '5',
+                                                                       'number' => 5,
                                                                        'strcount' => 0,
                                                                        'dircount' => 1,
                                                                        'uncommit' => 0,

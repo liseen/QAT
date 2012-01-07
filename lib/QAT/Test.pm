@@ -7,12 +7,11 @@ use warnings;
 use QAT;
 use Test::Deep;
 use JSON;
-use Encode;
 
 use Test::Base -Base;
 our @EXPORT = qw/run_blocks/;
 
-my $json = JSON->new->utf8->allow_nonref;
+my $json = JSON->new->allow_nonref;
 
 our %DBHCache;
 
@@ -37,8 +36,8 @@ sub check_response ($$) {
     }
 
     if ($response_deep) {
-        my $deep_content = decode_json($content);
-        my $deep_exp_content = decode_json($response_deep);
+        my $deep_content = $json->decode($content);
+        my $deep_exp_content = $json->decode($response_deep);
         is_deep($deep_content, $deep_exp_content, "$name response deep equal");
 
     }
@@ -58,14 +57,7 @@ sub check_response ($$) {
     }
 
     if ($response_validator) {
-        my $content = $content;
-
-        #my $flag = utf8::is_utf8($content);
-        # $flag
-        #$flag = utf8::is_utf8($response_validator);
-        # $flag
-        #
-        my $data = decode_json($content);
+        my $data = $json->decode($content);
         eval {
             my $validator = QAT::Validator->new(spec => $response_validator);
             $validator->validate($data)

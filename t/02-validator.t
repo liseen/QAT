@@ -8,7 +8,7 @@ use lib "$FindBin::Bin/../lib";
 use Test::Base;
 use JSON;
 
-my $json = JSON->new->utf8->allow_nonref;
+my $json = JSON->new->allow_nonref;
 
 use QAT::Validator;
 

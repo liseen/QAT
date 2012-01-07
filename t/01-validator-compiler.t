@@ -7,13 +7,13 @@ use lib "$FindBin::Bin/../lib";
 
 use Test::Base;
 use JSON;
-use Encode qw/is_utf8/;
 
 plan tests => 2* blocks() + 137;
 
 require QAT::Validator::Compiler;
 
-my $json = JSON->new->utf8->allow_nonref;
+#my $json = JSON->new->utf8->allow_nonref;
+my $json = JSON->new->allow_nonref;
 
 my $val = QAT::Validator::Compiler->new;
 
@@ -645,7 +645,7 @@ STRING :allowed('password', 'login', 'anonymous')
 --- perl
 if (defined) {
     !ref or die qq{Bad value: String expected.\n};
-    $_ eq 'password' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'password') or $_ eq 'login' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'login') or $_ eq 'anonymous' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'anonymous') or die qq{Invalid value: Allowed values are 'password', 'login', 'anonymous'.\n};
+    $_ eq 'password' or $_ eq 'login' or $_ eq 'anonymous' or die qq{Invalid value: Allowed values are 'password', 'login', 'anonymous'.\n};
 }
 --- valid
 "password"
@@ -677,7 +677,7 @@ if (defined) {
         local *_ = \( $_->{"dog"} );
         if (defined) {
             !ref or die qq{Bad value for "dog": String expected.\n};
-            $_ eq 'John' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'John') or $_ eq 'Mike' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'Mike') or die qq{Invalid value for "dog": Allowed values are 'John', 'Mike'.\n};
+            $_ eq 'John' or $_ eq 'Mike' or die qq{Invalid value for "dog": Allowed values are 'John', 'Mike'.\n};
         }
     }
     for (keys %$_) {
@@ -779,7 +779,7 @@ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 local *_ = \( $_->{"ret"} );
 defined or die qq{Value for "ret" required.\n};
 JSON::is_bool($_) or die qq{Bad value for "ret": Boolean expected.\n};
-$_ eq 'false' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'false') or die qq{Invalid value for "ret": Allowed values are 'false'.\n};
+$_ eq 'false' or die qq{Invalid value for "ret": Allowed values are 'false'.\n};
 }
 {
 local *_ = \( $_->{"errcode"} );
@@ -825,7 +825,7 @@ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 local *_ = \( $_->{"ret"} );
 defined or die qq{Value for "ret" required.\n};
 JSON::is_bool($_) or die qq{Bad value for "ret": Boolean expected.\n};
-$_ eq 'true' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'true') or die qq{Invalid value for "ret": Allowed values are 'true'.\n};
+$_ eq 'true' or die qq{Invalid value for "ret": Allowed values are 'true'.\n};
 }
 {
 local *_ = \( $_->{"data"} );
@@ -851,7 +851,7 @@ length or die qq{Invalid value for "name" for "data" array element: Nonempty sca
 local *_ = \( $_->{"sex"} );
 if (defined) {
 !ref or die qq{Bad value for "sex" for "data" array element: String expected.\n};
-$_ eq 'male' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'male') or $_ eq 'female' or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq 'female') or die qq{Invalid value for "sex" for "data" array element: Allowed values are 'male', 'female'.\n};
+$_ eq 'male' or $_ eq 'female' or die qq{Invalid value for "sex" for "data" array element: Allowed values are 'male', 'female'.\n};
 }
 }
 for (keys %$_) {
@@ -1006,7 +1006,7 @@ if (defined) {
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
 local *_ = \( $_->{"foo"} );
-$_ eq "abcd" or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq "abcd") or die qq{Bad value for "foo": string "abcd" expected.\n};
+$_ eq "abcd" or die qq{Bad value for "foo": string "abcd" expected.\n};
 }
 for (keys %$_) {
 $_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
@@ -1030,7 +1030,7 @@ if (defined) {
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
 local *_ = \( $_->{"foo"} );
-$_ eq "你好" or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq "你好") or die qq{Bad value for "foo": string "你好" expected.\n};
+$_ eq "你好" or die qq{Bad value for "foo": string "你好" expected.\n};
 }
 for (keys %$_) {
 $_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
@@ -1054,7 +1054,7 @@ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 local *_ = \( $_->{"foo"} );
 if (defined) {
 !ref or die qq{Bad value for "foo": String expected.\n};
-$_ eq "你好" or (Encode::is_utf8($_) && Encode::encode_utf8($_) eq "你好") or die qq{Invalid value for "foo": Allowed values are "你好".\n};
+$_ eq "你好" or die qq{Invalid value for "foo": Allowed values are "你好".\n};
 }
 }
 for (keys %$_) {
