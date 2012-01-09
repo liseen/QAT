@@ -67,7 +67,7 @@ sub make_http_request {
                 $el = read_file($2);
                 $el = uri_escape($el);
                 $el = "$1=$el";
-            } elsif ($l =~ /^(\w+)=(.+)$/) {
+            } elsif ($l =~ /^(\w+)=(.*)$/) {
                 $el = uri_escape($2);
                 $el = "$1=$el";
             } else {

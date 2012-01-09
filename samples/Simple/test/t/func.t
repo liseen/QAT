@@ -7,6 +7,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../../../inc";
 use lib "$FindBin::Bin/../../../../lib";
 
+#use QAT::Test::Filter;
 use QAT::Test;
 
 plan tests => 1 * blocks() + 9;
