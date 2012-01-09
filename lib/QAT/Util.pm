@@ -4,6 +4,7 @@ use strict;
 use warnings;
 #use Smart::Comments;
 
+use Time::HiRes qw/gettimeofday tv_interval/;
 use URI::Escape;
 use LWP::UserAgent;
 use HTTP::Request::Common;
@@ -107,14 +108,14 @@ sub make_http_request {
 
 sub do_http_request {
     my $args = shift;
-    ### $args
 
     my $ua = LWP::UserAgent->new();
     $ua->timeout($args->{timeout} || 10);
 
     my $req = make_http_request($args);
 
-    return $ua->request($req);
+    my $t0 = [ gettimeofday ];
+    return ($ua->request($req), tv_interval($t0));
 }
 
 1;

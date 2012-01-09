@@ -3,10 +3,11 @@ package QAT::Test;
 use strict;
 use warnings;
 #use Smart::Comments;
-
-use QAT;
-use Test::Deep;
+#
 use JSON;
+use Time::HiRes qw/gettimeofday tv_interval/;
+use Test::Deep;
+use QAT;
 
 use Test::Base -Base;
 our @EXPORT = qw/run_blocks/;
@@ -14,11 +15,15 @@ our @EXPORT = qw/run_blocks/;
 my $json = JSON->new->allow_nonref;
 
 our %DBHCache;
+our %PerfStat;
 
 END {
+    # disconnect database
     for my $dbh (values %DBHCache) {
         $dbh->disconnect;
     }
+
+    # stat the performance
 }
 
 sub check_response ($$) {
@@ -81,15 +86,17 @@ sub run_http_block ($) {
         $url = "http://$host:$port/$uri";
     }
 
-    my $res = QAT::Util::do_http_request({
+    my ($res, $elapsed) = QAT::Util::do_http_request({
         url => $url,
-        timeout => $block->timeout || '',
+        timeout => $block->timeout || 10,
         useragent => $block->useragent || '',
         method => $block->method || '',
         data => $block->data || '',
         data_urlencode => $block->data_urlencode || '',
         form => $block->form || '',
     });
+
+    ### $elapsed
 
     #ok($res->is_success, "$name request okay");
     my $response_code       = $block->response_code;
@@ -144,7 +151,7 @@ sub run_db_block ($) {
 
     my $r = {ret => JSON::true, data => $data };
 
-    my $content = encode_json $r;
+    my $content = $json->encode($r);
     check_response($block, $content);
 }
 
