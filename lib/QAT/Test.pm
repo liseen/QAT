@@ -22,12 +22,10 @@ END {
     for my $dbh (values %DBHCache) {
         $dbh->disconnect;
     }
-
-    # stat the performance
 }
 
-sub check_response ($$) {
-    my ($block, $content) = @_;
+sub check_response ($$$) {
+    my ($block, $content, $elapsed) = @_;
 
     my $name = $block->name;
 
@@ -35,6 +33,8 @@ sub check_response ($$) {
     my $response_like       = $block->response_like;
     my $response_deep       = $block->response_deep;
     my $response_validator  = $block->response_validator;
+    my $response_elapsed_limit  = $block->response_elapsed_limit;
+
 
     if ($response) {
         is($content, $response, "$name response");
@@ -70,6 +70,9 @@ sub check_response ($$) {
         ok(!$@, "$name response validator $@");
     }
 
+    if ($response_elapsed_limit) {
+        ok($response_elapsed_limit > $elapsed * 1000, "$name response elapsed limit")
+    }
 }
 
 sub run_http_block ($) {
@@ -118,7 +121,7 @@ sub run_http_block ($) {
 
     my $content = $res->content;
 
-    check_response($block, $content);
+    check_response($block, $content, $elapsed);
 }
 
 sub run_db_block ($) {
@@ -143,7 +146,9 @@ sub run_db_block ($) {
     my $data = [];
 
     my $sth = $dbh->prepare($sql);
+    my $t0 = [ gettimeofday ];
     $sth->execute();
+    my $elapsed = tv_interval($t0);
     while (my $ref = $sth->fetchrow_hashref()) {
         push @$data, $ref;
     }
@@ -152,7 +157,7 @@ sub run_db_block ($) {
     my $r = {ret => JSON::true, data => $data };
 
     my $content = $json->encode($r);
-    check_response($block, $content);
+    check_response($block, $content, $elapsed);
 }
 
 sub run_blocks () {

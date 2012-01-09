@@ -10,7 +10,7 @@ use lib "$FindBin::Bin/../../../../lib";
 #use QAT::Test::Filter;
 use QAT::Test;
 
-plan tests => 1 * blocks() + 9;
+plan tests => 1 * blocks() + 11;
 
 $ENV{QAT_ENV_HOST} = 'www.qunar.com';
 $ENV{QAT_ENV_PORT} = 80;
@@ -150,3 +150,17 @@ select * from aaa limit 1;
 --- response_like
 .+
 --- SKIP
+
+
+=== TEST 14 response_elapsed_limit
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_like
+$QAT_CONTEXT_ERRCODE
+--- response_elapsed_limit
+50
+
+
+
