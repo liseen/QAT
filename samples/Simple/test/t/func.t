@@ -7,8 +7,12 @@ use FindBin;
 use lib "$FindBin::Bin/../../../../inc";
 use lib "$FindBin::Bin/../../../../lib";
 
+use lib "$FindBin::Bin/../inc";
+use lib "$FindBin::Bin/../lib";
+
 #use QAT::Test::Filter;
-use QAT::Test;
+#use QAT::Test;
+use Simple::Test;
 
 plan tests => 1 * blocks() + 11;
 
