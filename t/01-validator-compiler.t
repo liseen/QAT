@@ -8,11 +8,10 @@ use lib "$FindBin::Bin/../lib";
 use Test::Base;
 use JSON;
 
-plan tests => 2* blocks() + 137;
+plan tests => 5 * blocks() + 23;
 
 require QAT::Validator::Compiler;
 
-#my $json = JSON->new->utf8->allow_nonref;
 my $json = JSON->new->allow_nonref;
 
 my $val = QAT::Validator::Compiler->new;
@@ -998,7 +997,7 @@ Bad value for "foo": number -0.2 expected.
 
 
 
-=== TEST 36 string
+=== TEST 36 string hash value
 --- spec
 {foo: "abcd"}
 --- perl
@@ -1066,5 +1065,29 @@ $_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
 --- invalid
 {"foo": 10}
 Invalid value for "foo": Allowed values are "你好".
+
+
+=== TEST 39 string hash value with attrs
+--- spec
+{foo: "abcd" :to($ENV{QAT_ENV_FOO})}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"foo"} );
+$_ eq "abcd" or die qq{Bad value for "foo": string "abcd" expected.\n};
+$ENV{QAT_ENV_FOO} = $_;
+}
+for (keys %$_) {
+$_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{"foo": "abcd"}
+--- invalid
+{"foo": 10}
+Bad value for "foo": string "abcd" expected.
+{"foo": "abc"}
+Bad value for "foo": string "abcd" expected.
 
 

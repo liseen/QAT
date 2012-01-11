@@ -14,7 +14,7 @@ use lib "$FindBin::Bin/../lib";
 #use QAT::Test;
 use Simple::Test;
 
-plan tests => 1 * blocks() + 11;
+plan tests => 1 * blocks() + 13;
 
 $ENV{QAT_ENV_HOST} = 'www.qunar.com';
 $ENV{QAT_ENV_PORT} = 80;
@@ -142,7 +142,28 @@ http://upd.qunar.com/api/imgup/iapp?app=test
 $QAT_CONTEXT_ERRCODE
 
 
-=== TEST 13 test sql
+
+=== TEST 13 set context variable from validator
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_validator
+{"errcode": INT, "errmsg": "无效请求" :to($ENV{QAT_CONTEXT_ERRMSG}), "ret": BOOL}
+
+
+
+=== TEST 14 get context variable
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_deep
+{"errcode": 100, "errmsg": "$QAT_CONTEXT_ERRMSG", "ret": false}
+
+
+
+=== TEST 15 test sql
 --- db_dsn
 DBI:mysql:database=$QAT_ENV_DB_NAME;host=$QAT_ENV_DB_HOST;port=$QAT_ENV_DB_PORT;mysql_enable_utf8=1
 --- db_user
@@ -156,7 +177,8 @@ select * from aaa limit 1;
 --- SKIP
 
 
-=== TEST 14 response_elapsed_limit
+
+=== TEST 16 response_elapsed_limit
 --- url
 http://upd.qunar.com/api/imgup/iapp?app=test
 --- response_code

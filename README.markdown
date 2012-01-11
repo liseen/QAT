@@ -1,7 +1,7 @@
 Name
 ===
 
-**QAT** Qunar Auto Test Util
+**QAT** Qunar Auto Test Util library
 
 SAYNOPSIS
 ===
@@ -58,8 +58,21 @@ SAYNOPSIS
             # valid
         }
 
+QAT Util
+===
 
-Spec Syntax
+my $res = do_http_request({
+    host => '',
+    port => '',
+    uri => '',
+    url => '',
+    data => '',
+    data_urlencode => ''
+    form => '',
+});
+
+
+QAT Validator Spec Syntax
 ===
 
     validator: lhs(?) value <commit> eofile
@@ -108,7 +121,8 @@ Spec Syntax
         http://search.cpan.org/~dconway/Parse-RecDescent-1.965001/lib/Parse/RecDescent.pm
         http://search.cpan.org/~adamk/Text-Balanced-2.02/lib/Text/Balanced.pm
 
-Spec Samples:
+QAT Validator Spec Samples:
+===
 
     1. nonempty string
     STRING :nonempty
@@ -248,7 +262,7 @@ Install
     use lib "$FindBin::Bin/../inc";
     use lib "$FindBin::Bin/../lib";
 
-Samples
+Test Samples
 ===
 
     Simple project
