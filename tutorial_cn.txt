@@ -1,0 +1,200 @@
+如何使用QAT创建自己的测试项目
+创建项目目录
+bin
+inc
+lib
+t
+如何书写HTTP请求测试
+url
+host port uri
+data
+data_urlencode
+form
+如何发起数据库请求
+如何验证结果
+response_code
+response
+response_deep
+response_like
+response_validator
+response_elapsed_limit
+设置与使用变量
+如何使用变量
+延伸
+如何添加过滤器， 请自己实现一个过滤 ajax 回头callback函数的 过滤器
+如何使用QAT创建自己的测试项目
+下面以QAT 项目中samples下的simple项目为例
+
+创建项目目录
+mkdir simple
+cd simple
+mkdir bin lib inc t
+下面解释一下各个目录：
+
+bin
+bin目录用来放测试用的一些运行脚本， 包括：
+
+bin/reindex 格式话测试文件
+inc
+inc 目录用来放你想的测试模块依赖的其他外部模块， 你需要
+
+cp -r /path/QAT/inc/* inc
+cp -r /path/QAT/lib/* lib
+lib
+lib 目录用来放你为测试项目写的代码， 往往是继承与Test::Base模块的一个子类, 见Simple/test/lib/
+
+t
+测试文件所在的目录
+
+如何书写HTTP请求测试
+下面是几个简单的例子
+
+=== TEST 1  请求URL并测试返回的http code
+--- url
+http://www.qunar.com/
+--- response_code
+200
+
+
+
+=== TEST 2 不直接给出URL，url = http://$host:$port/$uri
+--- host
+www.qunar.com
+--- port
+80
+--- uri
+/
+--- response_code
+200
+--- response_like
+去哪儿.*
+
+请求参数有 url host post uri data data_urlencode form method, 如果你觉得上面一些参数看着很熟悉， 那么对了， 这些参数的含义和curl命令的选项命名和语义都是相似的， 下面逐个解释一下
+
+url
+请求的URL， 如： http://www.qunar.com
+
+host port uri
+url = http://$host:$port/$uri
+
+data
+如果格式为@filename， 则读取文件filename的内容为$data
+默认以POST方式发送, 对$data不做处理, 如果method为GET， 则追加在url部分
+GET：
+GET $url?$data
+
+POST:
+POST $url
+...
+...
+$data
+data_urlencode
+data_urlencode 有下面几种格式
+
+content
+直接获取内容， 并urlencode内容
+=content
+直接获取content内容， 内容中没有=号， urlencode内容
+name=content
+urlencode 内容， 并返回 name=urlencode_content
+@filename
+读取文件中的内容， 并urlencode
+name@filename
+读取文件中的内容， 并urlencode， 返回name=urlencode_filecontent
+默认以POST方式发送， 如果method为GET， 则将内容添加成 $url?$arg 的方式发送出去
+多行之间用 & 连接
+
+form
+如果需要上传文件， 可以使用form
+
+file=@data/img/a.jpg
+如何发起数据库请求
+如何验证结果
+response_code
+HTTP 返回码验证， 只在HTTP请求的时候有用
+
+response
+期望的输出结构， 字符串比较
+
+response_deep
+深度比较两个数据结构， 这里会先对期望结果和实际输出结果进行json_decode
+
+response_like
+正则匹配输出
+
+response_validator
+验证输出
+
+response_elapsed_limit
+请求时间限制， 超过限制， 测试会失败
+
+设置与使用变量
+根据正则设置变量
+# 将返回结果中的数字匹配到变量 $ENV{QAT_CONTEXT_ERRCODE}
+=== TEST 11 set context variable from regular expresssion
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_like
+(?<QAT_CONTEXT_ERRCODE>\d+)
+
+
+# 使用之前的得到的变量， 这里用qat_expand_var 展开
+=== TEST 12 get context variable
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_like
+$QAT_CONTEXT_ERRCODE
+根据validator设置变量
+# 这个测试执行结束之后， $ENV{QAT_CONTEXT_ERRMSG} = "无效请求"
+=== TEST 13 set context variable from validator
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_validator
+{"errcode": INT, "errmsg": "无效请求" :to($ENV{QAT_CONTEXT_ERRMSG}), "ret": BOOL}
+
+
+# 经过例子中的 qat_expand_var 可以把 $QAT_CONTEXT_ERRMSG 换成 无效请求
+=== TEST 14 get context variable
+--- url
+http://upd.qunar.com/api/imgup/iapp?app=test
+--- response_code
+200
+--- response_deep
+{"errcode": 100, "errmsg": "$QAT_CONTEXT_ERRMSG", "ret": false}
+如何使用变量
+如上面设置变量中的代码所示， 使用变量我们用的是 qat_expand_var 过滤器来实现的， 过滤器的代码实现如下：
+
+package  Simple::Test::Filter;
+
+use Test::Base::Filter -base;
+
+sub qat_expand_var {
+    my $v = shift;
+
+    # 用环境变量中的值， 替换以 "$QAT" 开头的变量
+    $v =~ s/\$(QAT_[_A-Z0-9]+)/
+        if (!defined $ENV{$1}) {
+            die "No environment $1 defined.\n";
+        }
+    $ENV{$1}/eg;
+
+    $v;
+}
+
+1;
+看到上面的过滤器， 大家不知道看出问题了没， 据一个例子， 订单编号的首字母往往用来表示类型， 比如订单E12345， E表示电子订单， 如果我们有一个变量表示订单类型， 那么 $QAT_CONTEXT_ORDER_TYPE12345, 很明显最终会得不到我们想要的结果。 我们需要支持一下 下面这种用法：
+
+     ${QAT_CONTEXT_ORDER_TYPE}12345
+要支持这种写法， 上面的过滤器代码， 如何改呢？
+
+延伸
+如何添加过滤器， 请自己实现一个过滤 ajax 回头callback函数的 过滤器
+callback({"k": "value"}) => {"k": "value"}
+添加标签
+
