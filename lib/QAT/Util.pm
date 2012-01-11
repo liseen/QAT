@@ -111,6 +111,7 @@ sub do_http_request {
 
     my $ua = LWP::UserAgent->new();
     $ua->timeout($args->{timeout} || 10);
+    $ua->max_redirect($args->{max_redirect} || 0);
 
     my $req = make_http_request($args);
 
