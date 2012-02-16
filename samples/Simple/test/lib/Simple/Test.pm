@@ -2,7 +2,7 @@ package Simple::Test;
 
 use strict;
 use warnings;
-#use Smart::Comments;
+use Smart::Comments;
 #
 use JSON;
 use Time::HiRes qw/gettimeofday tv_interval/;
