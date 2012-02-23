@@ -8,7 +8,7 @@ use lib "$FindBin::Bin/../lib";
 use Test::Base;
 use JSON;
 
-plan tests => 5 * blocks() + 23;
+plan tests => 5 * blocks() + 18;
 
 require QAT::Validator::Compiler;
 
@@ -1067,6 +1067,7 @@ $_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
 Invalid value for "foo": Allowed values are "你好".
 
 
+
 === TEST 39 string hash value with attrs
 --- spec
 {foo: "abcd" :to($ENV{QAT_ENV_FOO})}
@@ -1091,3 +1092,176 @@ Bad value for "foo": string "abcd" expected.
 Bad value for "foo": string "abcd" expected.
 
 
+
+=== TEST 40 STRING minlen
+--- spec
+{foo: STRING :minlen(5)}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"foo"} );
+if (defined) {
+!ref or die qq{Bad value for "foo": String expected.\n};
+length($_) >= 5 or die qq{Value for "foo" length must be greater than or equal to 5.\n};
+}
+}
+for (keys %$_) {
+$_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{ "foo": "abcde" }
+--- invalid
+{ "foo": "abcd" }
+Value for "foo" length must be greater than or equal to 5.
+
+
+
+=== TEST 41 STRING maxlen
+--- spec
+{foo: STRING :maxlen(5)}
+--- perl
+if (defined) {
+ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+{
+local *_ = \( $_->{"foo"} );
+if (defined) {
+!ref or die qq{Bad value for "foo": String expected.\n};
+length($_) <= 5 or die qq{Value for "foo" length must be less than or equal to 5.\n};
+}
+}
+for (keys %$_) {
+$_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
+}
+--- valid
+{ "foo": "abcd" }
+{ "foo": "abcde" }
+--- invalid
+{ "foo": "abcdef" }
+Value for "foo" length must be less than or equal to 5.
+
+
+
+=== TEST 42 array minlen
+--- spec
+[ STRING ] :minlen(3)
+--- perl
+if (defined) {
+ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+@$_ >= 3 or die qq{Array length must be greater than or equal to 3.\n};
+for (@$_) {
+if (defined) {
+!ref or die qq{Bad value for array element: String expected.\n};
+}
+}
+}
+--- valid
+[ "a", "b", "c" ]
+--- invalid
+[ "a", "b" ]
+Array length must be greater than or equal to 3.
+
+
+
+=== TEST 43 array maxlen
+--- spec
+[ STRING ] :maxlen(3)
+--- perl
+if (defined) {
+ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+@$_ <= 3 or die qq{Array length must be less than or equal to 3.\n};
+for (@$_) {
+if (defined) {
+!ref or die qq{Bad value for array element: String expected.\n};
+}
+}
+}
+--- valid
+[ "a", "b", "c" ]
+--- invalid
+[ "a", "b", "c", "d"]
+Array length must be less than or equal to 3.
+
+
+
+=== TEST 44 hash minlen
+--- spec
+{
+    id: INT,
+    name: STRING,
+    age: STRING
+} :minlen(2)
+--- perl
+if (defined) {
+ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+ keys(%$_) >= 2 or die qq{Hash must have greater than or equal to 2 keys.\n};
+ {
+ local *_ = \( $_->{"id"} );
+ if (defined) {
+ /^[-+]?\d+$/ or die qq{Bad value for "id": Integer expected.\n};
+ }
+ }
+ {
+ local *_ = \( $_->{"name"} );
+ if (defined) {
+ !ref or die qq{Bad value for "name": String expected.\n};
+ }
+ }
+ {
+ local *_ = \( $_->{"age"} );
+ if (defined) {
+ !ref or die qq{Bad value for "age": String expected.\n};
+ }
+ }
+ for (keys %$_) {
+ $_ eq "id" or $_ eq "name" or $_ eq "age" or die qq{Unrecognized key in hash: $_\n};
+ }
+ }
+--- valid
+{ "id": 1, "name": "zhangfei"}
+--- invalid
+{ "id": 1}
+Hash must have greater than or equal to 2 keys.
+
+
+
+=== TEST 45 hash maxlen
+--- spec
+{
+    id: INT,
+    name: STRING,
+    age: STRING
+} :maxlen(2)
+--- perl
+if (defined) {
+ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+ keys(%$_) <= 2 or die qq{Hash must have less than or equal to 2 keys.\n};
+ {
+ local *_ = \( $_->{"id"} );
+ if (defined) {
+ /^[-+]?\d+$/ or die qq{Bad value for "id": Integer expected.\n};
+ }
+ }
+ {
+ local *_ = \( $_->{"name"} );
+ if (defined) {
+ !ref or die qq{Bad value for "name": String expected.\n};
+ }
+ }
+ {
+ local *_ = \( $_->{"age"} );
+ if (defined) {
+ !ref or die qq{Bad value for "age": String expected.\n};
+ }
+ }
+ for (keys %$_) {
+ $_ eq "id" or $_ eq "name" or $_ eq "age" or die qq{Unrecognized key in hash: $_\n};
+ }
+ }
+--- valid
+{ "id": 1}
+--- invalid
+{ "id": 1, "name": "zhangfei", "age": 15}
+Hash must have less than or equal to 2 keys.

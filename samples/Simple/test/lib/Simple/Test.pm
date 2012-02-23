@@ -52,8 +52,6 @@ sub check_response ($$$) {
         if ($content =~ $pat) {
             while (my ($k, $v) = each %+) {
                 $ENV{$k} = $v;
-                ### key: $k
-                ### value: $v
             }
             ok(1, "$name response like");
         } else {
@@ -141,14 +139,17 @@ sub run_db_block ($) {
         $dbh = $DBHCache{$db_key};
     } else {
         require DBI;
-        $dbh = DBI->connect($db_dsn, $db_user, $db_password);
-    }
+        $dbh = DBI->connect($db_dsn, $db_user, $db_password)
+            or die "Couldn't connect to database: " . DBI->errstr;
 
+        $DBHCache{$db_key} = $dbh;
+    }
 
     my $data = [];
     my $content = undef;
 
-    my $sth = $dbh->prepare($sql);
+    my $sth = $dbh->prepare($sql)
+        or die "Couldn't prepare statement: " . $dbh->errstr;
 
     my $t0 = [ gettimeofday ];
     my $res = $sth->execute();

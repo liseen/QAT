@@ -181,6 +181,20 @@ _EOC_
 _EOC_
         }
 
+        if (my $args = delete $attrs->{minlen}) {
+            my $minlen = $args->[0];
+            $code3 .= <<"_EOC_";
+keys(\%\$_) >= $minlen or die qq{Hash must have greater than or equal to $minlen keys$for_topic.\\n};
+_EOC_
+        }
+
+        if (my $args = delete $attrs->{maxlen}) {
+            my $maxlen = $args->[0];
+            $code3 .= <<"_EOC_";
+keys(\%\$_) <= $maxlen or die qq{Hash must have less than or equal to $maxlen keys$for_topic.\\n};
+_EOC_
+        }
+
         $code2 .= <<"_EOC_" . $code3 . join('', map { $_->[1] } @$pairs);
 ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
@@ -249,6 +263,20 @@ _EOC_
             $code2 .= "length or die qq{Invalid value$for_topic: Nonempty scalar expected.\\n};\n";
         }
 
+        if (my $args = delete $attrs->{minlen}) {
+            my $minlen = $args->[0];
+            $code2 .= <<"_EOC_";
+length(\$_) >= $minlen or die qq{Value$for_topic length must be greater than or equal to $minlen.\\n};
+_EOC_
+        }
+
+        if (my $args = delete $attrs->{maxlen}) {
+            my $maxlen = $args->[0];
+            $code2 .= <<"_EOC_";
+length(\$_) <= $maxlen or die qq{Value$for_topic length must be less than or equal to $maxlen.\\n};
+_EOC_
+        }
+
         if (my $args = delete $attrs->{allowed}) {
             my $values = join ', ', @$args;
             my $expr = join ' or ', map { "\$_ eq $_" } @$args;
@@ -302,6 +330,20 @@ _EOC_
         if (my $args = delete $attrs->{nonempty}) {
             $code3 .= <<"_EOC_";
 \@\$_ or die qq{Array cannot be empty$for_topic.\\n};
+_EOC_
+        }
+
+        if (my $args = delete $attrs->{minlen}) {
+            my $minlen = $args->[0];
+            $code3 .= <<"_EOC_";
+\@\$_ >= $minlen or die qq{Array length must be greater than or equal to $minlen.\\n};
+_EOC_
+        }
+
+        if (my $args = delete $attrs->{maxlen}) {
+            my $maxlen = $args->[0];
+            $code3 .= <<"_EOC_";
+\@\$_ <= $maxlen or die qq{Array length must be less than or equal to $maxlen.\\n};
 _EOC_
         }
 
